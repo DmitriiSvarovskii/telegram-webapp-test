@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Бронирование стола</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         body {
             margin: 0;
@@ -25,7 +27,7 @@
             align-items: center;
             gap: 20px;
             padding: 20px;
-            height: 1000%;
+            width: 100%;
             min-height: 100vh;
             overflow-y: scroll;
         }
@@ -51,6 +53,15 @@
             font-size: 16px;
             cursor: pointer;
         }
+
+        .calendar-input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 250px;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -69,14 +80,21 @@
             enterFullscreen();
         });
 
-        document.addEventListener("DOMContentLoaded", enterFullscreen);
+        document.addEventListener("DOMContentLoaded", function () {
+            enterFullscreen();
+            flatpickr("#calendar", {
+                dateFormat: "d-m-Y",
+                locale: "ru"
+            });
+        });
     </script>
     <div class="container">
-        <img src="image.svg" alt="Logo" class="logo">
+        <img src="your-logo.png" alt="Logo" class="logo">
         <div class="text">
             <p>Добро пожаловать!</p>
             <p>Забронируйте столик в пару кликов и наслаждайтесь уютной атмосферой.</p>
             <p>Выберите дату и время</p>
+            <input type="text" id="calendar" class="calendar-input" placeholder="Выберите дату">
             <p>Укажите количество гостей</p>
             <p>Выберите удобное место</p>
             <p>Нажмите «Забронировать стол»</p>
