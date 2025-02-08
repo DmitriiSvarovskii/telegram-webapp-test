@@ -15,6 +15,9 @@
             padding: 20px;
             transition: filter 0.3s ease, opacity 0.3s ease;
             position: relative;
+            height: var(--tg-viewport-height);
+            /* Используем переменную для адаптации под экран */
+            overflow: hidden;
         }
 
         h1 {
@@ -74,9 +77,17 @@
     <div id="overlay"></div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();  // Разворачиваем WebApp на весь экран
+        // Ждем загрузки DOM перед запуском WebApp
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.Telegram && window.Telegram.WebApp) {
+                // Разворачиваем WebApp на весь экран
+                window.Telegram.WebApp.expand();
+            }
+        });
 
+        const tg = window.Telegram.WebApp;
+
+        // Закрыть WebApp при нажатии на кнопку
         document.getElementById("tg-btn").addEventListener("click", () => {
             tg.close();
         });
