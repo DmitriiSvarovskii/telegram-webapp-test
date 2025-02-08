@@ -16,52 +16,35 @@
         body {
             margin: 0;
             height: 100vh;
-            background-color: #ffffff;
-            background-size: cover;
-            background-position: center;
+            background-color: #f4f4f4;
             font-family: Arial, sans-serif;
-            overflow: hidden;
-            position: fixed;
-            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            border-radius: 10px;
             padding: 20px;
-            width: 100%;
-            min-height: 100vh;
-            overflow-y: scroll;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .logo {
-            width: 150px;
-            height: 150px;
-            margin-bottom: 20px;
-        }
-
-        .text {
-            font-size: 16px;
-            color: #000;
-            margin-bottom: 20px;
+        .form-group {
+            margin-bottom: 15px;
         }
 
         .button {
+            width: 100%;
             background-color: #333;
             color: white;
-            padding: 15px 20px;
+            padding: 15px;
             border: none;
             border-radius: 10px;
             font-size: 16px;
             cursor: pointer;
-        }
-
-        #root {
-            width: 100%;
-            display: flex;
-            justify-content: center;
         }
     </style>
 </head>
@@ -70,38 +53,28 @@
     <script>
         Telegram.WebApp.expand();
         Telegram.WebApp.enableClosingConfirmation();
-
-        function enterFullscreen() {
-            if (!Telegram.WebApp.isFullscreen) {
-                Telegram.WebApp.requestFullscreen();
-            }
-        }
-
-        Telegram.WebApp.onEvent('viewportChanged', function (event) {
-            enterFullscreen();
-        });
     </script>
 
     <div class="container">
-        <img src="your-logo.png" alt="Logo" class="logo">
-        <div class="text">
-            <p>Добро пожаловать!</p>
-            <p>Забронируйте столик в пару кликов и наслаждайтесь уютной атмосферой.</p>
-            <p>Выберите дату и время</p>
-        </div>
         <div id="root"></div>
-        <div class="text">
-            <p>Укажите количество гостей</p>
-            <p>Выберите удобное место</p>
-            <p>Нажмите «Забронировать стол»</p>
-            <p>P.S. Здесь будет указан Ваш реальный текст</p>
+        <div class="form-group">
+            <label>Время посадки</label>
+            <input type="time" class="input" value="16:20">
         </div>
-        <button class="button">ЗАБРОНИРОВАТЬ СТОЛ</button>
+        <div class="form-group">
+            <label>Продолжительность</label>
+            <input type="number" class="input" value="2"> ч
+        </div>
+        <div class="form-group">
+            <label>Количество гостей</label>
+            <input type="number" class="input" value="2">
+        </div>
+        <button class="button">ПЕРЕЙТИ К БРОНИРОВАНИЮ</button>
     </div>
 
     <script type="text/babel">
         const { useState } = React;
-        const { LocalizationProvider, DatePicker } = MaterialUI.XDatePickers;
+        const { LocalizationProvider, StaticDatePicker } = MaterialUI.XDatePickers;
         const { AdapterDateFns } = MaterialUI;
         const { TextField } = MaterialUI;
 
@@ -109,12 +82,11 @@
             const [value, setValue] = useState(new Date());
             return (
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                        label="Выберите дату"
+                    <StaticDatePicker
+                        displayStaticWrapperAs="desktop"
                         value={value}
                         onChange={(newValue) => setValue(newValue)}
-                        open={true} // Открытый по умолчанию
-                        renderInput={(params) => <TextField {...params} />}
+                        renderInput={(params) => <TextField {...params} fullWidth />}
                     />
                 </LocalizationProvider>
             );
