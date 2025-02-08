@@ -104,6 +104,30 @@
         }
         ReactDOM.render(<Calendar />, document.getElementById("root"));
     </script>
+    <script>
+        // Функция для прокрутки страницы вниз
+        function scrollToBottom() {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+        }
+
+        // Функция для прокрутки страницы вверх
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        // Добавим обработчик событий на кнопку бронирования
+        document.querySelector(".button").addEventListener("click", scrollToBottom);
+
+        // Можно добавить кнопку вверх, если нужно
+        let upButton = document.createElement("button");
+        upButton.innerText = "Наверх";
+        upButton.className = "button";
+        upButton.style.position = "fixed";
+        upButton.style.bottom = "10px";
+        upButton.style.right = "10px";
+        upButton.addEventListener("click", scrollToTop);
+        document.body.appendChild(upButton);
+    </script>
 </body>
 
 </html>
