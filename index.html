@@ -4,14 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Бронирование стола</title>
+    <title>Полноэкранное WebApp</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@mui/material@latest/umd/material-ui.development.js"></script>
-    <script src="https://unpkg.com/@mui/x-date-pickers@latest/umd/material-ui-x-date-pickers.development.js"></script>
-    <script src="https://unpkg.com/@date-io/date-fns@latest/build/index.js"></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -22,7 +16,6 @@
             height: 100vh;
             background-color: #f4f4f4;
             overflow: hidden;
-            /* Изменено с hidden на auto */
         }
 
         .container {
@@ -31,31 +24,39 @@
             align-items: center;
             gap: 20px;
             padding: 20px;
-            overflow: auto;
+            overflow-y: auto;
             width: 100%;
         }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .button {
-            width: 100%;
-            background-color: #333;
-            color: white;
-            padding: 15px;
-            border: none;
+        .card {
+            width: 90%;
+            max-width: 400px;
+            background: white;
             border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+            min-height: 200px;
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+        }
+
+        .card p {
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
     <script>
-        Telegram.WebApp.expand();
-        // Telegram.WebApp.enableClosingConfirmation();
+        Telegram.WebApp.expand(); // Растягиваем приложение на весь экран
+        // Telegram.WebApp.enableClosingConfirmation(); // Предотвращаем случайное закрытие
+
         function enterFullscreen() {
             if (!Telegram.WebApp.isFullscreen) {
                 Telegram.WebApp.requestFullscreen();
@@ -68,67 +69,32 @@
     </script>
 
     <div class="container">
-        <div id="root"></div>
-        <div class="form-group">
-            <label>Время пососаcfдки</label>
-            <input type="time" class="input" value="16:20">
+        <div class="card">
+            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
+                alt="Товар 1">
+            <p>Товар 1</p>
         </div>
-        <div class="form-group">
-            <label>Продолжительность</label>
-            <input type="number" class="input" value="2"> ч
+        <div class="card">
+            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
+                alt="Товар 2">
+            <p>Товар 2</p>
         </div>
-        <div class="form-group">
-            <label>Количество гостей</label>
-            <input type="number" class="input" value="2">
+        <div class="card">
+            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
+                alt="Товар 3">
+            <p>Товар 3</p>
         </div>
-        <button class="button">ПЕРЕЙТИ К БРОНИРОВАНИЮ</button>
+        <div class="card">
+            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
+                alt="Товар 4">
+            <p>Товар 4</p>
+        </div>
+        <div class="card">
+            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
+                alt="Товар 5">
+            <p>Товар 5</p>
+        </div>
     </div>
-
-    <script type="text/babel">
-        const { useState } = React;
-        const { LocalizationProvider, StaticDatePicker } = MaterialUI.XDatePickers;
-        const { AdapterDateFns } = MaterialUI;
-        const { TextField } = MaterialUI;
-
-        function Calendar() {
-            const [value, setValue] = useState(new Date());
-            return (
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                        label="Выберите дату"
-                        value={value}
-                        onChange={(newValue) => setValue(newValue)}
-                        renderInput={(params) => <TextField {...params} />}
-                    />
-                </LocalizationProvider>
-            );
-        }
-        ReactDOM.render(<Calendar />, document.getElementById("root"));
-    </script>
-    <script>
-        // Функция для прокрутки страницы вниз
-        function scrollToBottom() {
-            window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-        }
-
-        // Функция для прокрутки страницы вверх
-        function scrollToTop() {
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        }
-
-        // Добавим обработчик событий на кнопку бронирования
-        document.querySelector(".button").addEventListener("click", scrollToBottom);
-
-        // Можно добавить кнопку вверх, если нужно
-        let upButton = document.createElement("button");
-        upButton.innerText = "Наверх";
-        upButton.className = "button";
-        upButton.style.position = "fixed";
-        upButton.style.bottom = "10px";
-        upButton.style.right = "10px";
-        upButton.addEventListener("click", scrollToTop);
-        document.body.appendChild(upButton);
-    </script>
 </body>
 
 </html>
