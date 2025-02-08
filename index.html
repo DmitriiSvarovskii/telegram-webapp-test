@@ -13,6 +13,7 @@
             background-color: #f4f4f4;
             margin: 0;
             padding: 20px;
+            transition: filter 0.3s ease;
         }
 
         h1 {
@@ -36,7 +37,7 @@
 </head>
 
 <body>
-    <h1>Welcome to Telegram WebApp</h1>
+    <h1>Protected WebApp</h1>
     <button id="tg-btn">Close WebApp</button>
 
     <script>
@@ -47,33 +48,32 @@
             tg.close();
         });
 
-        // === АНТИСКРИНШОТ ЗАЩИТА ===
-        const overlay = document.createElement("canvas");
-        overlay.style.position = "fixed";
-        overlay.style.top = "0";
-        overlay.style.left = "0";
-        overlay.style.width = "100vw";
-        overlay.style.height = "100vh";
-        overlay.style.pointerEvents = "none";
-        overlay.style.zIndex = "9999";
-        document.body.appendChild(overlay);
+        // === Блокировка скриншотов с WebGL ===
+        function blockScreenshots() {
+            const canvas = document.createElement("canvas");
+            document.body.appendChild(canvas);
+            canvas.style.position = "fixed";
+            canvas.style.top = "0";
+            canvas.style.left = "0";
+            canvas.style.width = "100vw";
+            canvas.style.height = "100vh";
+            canvas.style.zIndex = "9999";
 
-        const ctx = overlay.getContext("2d");
-
-        function generateNoise() {
-            const width = overlay.width = window.innerWidth;
-            const height = overlay.height = window.innerHeight;
-            const imageData = ctx.createImageData(width, height);
-            const buffer = new Uint32Array(imageData.data.buffer);
-
-            for (let i = 0; i < buffer.length; i++) {
-                buffer[i] = Math.random() < 0.5 ? 0xff000000 : 0xffffffff; // Черные и белые пиксели
-            }
-
-            ctx.putImageData(imageData, 0, 0);
+            const gl = canvas.getContext("webgl");
+            gl.clearColor(0, 0, 0, 1);
+            gl.clear(gl.COLOR_BUFFER_BIT);
         }
+        blockScreenshots();
 
-        setInterval(generateNoise, 100);  // Каждые 100 мс обновляем шум
+        // === Размытие контента при уходе в фон (для iOS) ===
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                document.body.style.filter = "blur(50px)";
+            } else {
+                document.body.style.filter = "none";
+            }
+        });
+
     </script>
 </body>
 
