@@ -15,12 +15,11 @@
             padding: 20px;
             transition: filter 0.3s ease, opacity 0.3s ease;
             position: relative;
-            height: var(--tg-viewport-height);
-            overflow: hidden;
+            height: 100%;
+            overflow: auto;
+            background-image: url('https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg');
             background-size: cover;
             /* Фон по умолчанию */
-            background-image: #f4f4f4;
-            /* Пример фона */
         }
 
         h1 {
@@ -39,11 +38,21 @@
             border-radius: 10px;
             transition: filter 0.3s ease, opacity 0.3s ease;
         }
+
+        .content {
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+        }
     </style>
 </head>
 
 <body>
     <h1>Protected WebApp</h1>
+    <div class="content">
+        <p>This is a test WebApp with scrolling and fullscreen functionality. Scroll down to stretch the background.</p>
+    </div>
+
     <div id="image-container">
         <img id="main-image"
             src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
