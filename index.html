@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram WebApp</title>
+    <title>Telegram WebApp Fullscreen</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
@@ -72,6 +72,7 @@
     <div id="image-container">
         <img id="main-image" src="https://source.unsplash.com/random/400x400" alt="Random Image">
     </div>
+    <button id="fullscreen-btn">Enter Fullscreen</button>
     <button id="tg-btn">Close WebApp</button>
 
     <div id="overlay"></div>
@@ -90,6 +91,16 @@
         // Закрыть WebApp при нажатии на кнопку
         document.getElementById("tg-btn").addEventListener("click", () => {
             tg.close();
+        });
+
+        // Включить полноэкранный режим
+        document.getElementById("fullscreen-btn").addEventListener("click", () => {
+            tg.requestFullscreen();
+        });
+
+        // Слушаем событие изменения полноэкранного режима
+        tg.onEvent("fullscreenChanged", () => {
+            console.log("Fullscreen mode changed. Is fullscreen: ", tg.isFullscreen);
         });
 
         // === Размытие контента при переключении окон ===
