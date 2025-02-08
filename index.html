@@ -1,126 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram WebApp Fullscreen</title>
+    <title>Полноэкранное WebApp</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
             margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
             padding: 20px;
-            transition: filter 0.3s ease, opacity 0.3s ease;
-            position: relative;
-            height: 100%;
-            overflow: auto;
-            background-image: url('https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg');
-            background-size: cover;
-            /* Фон по умолчанию */
         }
 
-        h1 {
-            color: #333;
+        .card {
+            width: 250px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
         }
 
-        #image-container {
-            width: 80%;
-            max-width: 400px;
-            margin: 20px auto;
-            position: relative;
-        }
-
-        #main-image {
+        .card img {
             width: 100%;
-            border-radius: 10px;
-            transition: filter 0.3s ease, opacity 0.3s ease;
+            height: auto;
         }
 
-        .content {
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
+        .card p {
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
-    <h1>Protected WebApp</h1>
-    <div class="content">
-        <p>This is a test WebApp with scrolling and fullscreen functionality. Scroll down to stretch the background.</p>
-    </div>
-
-    <div id="image-container">
-        <img id="main-image"
-            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
-            alt="Random Image">
-    </div>
-    <div id="image-container">
-        <img id="main-image"
-            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
-            alt="Random Image">
-    </div>
-    <div id="image-container">
-        <img id="main-image"
-            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
-            alt="Random Image">
-    </div>
-    <div id="image-container">
-        <img id="main-image"
-            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
-            alt="Random Image">
-    </div>
-
     <script>
-        // Запрос на полноэкранный режим при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function () {
-            if (window.Telegram && window.Telegram.WebApp) {
-                // Telegram.WebApp.expand();
-                Telegram.WebApp.requestFullscreen();
+        Telegram.WebApp.expand(); // Растягиваем приложение на весь экран
+
+        Telegram.WebApp.onEvent('viewportChanged', function (event) {
+            if (!Telegram.WebApp.isFullscreen) {
+                Telegram.WebApp.requestFullscreen(); // Запрос на полноэкранный режим
             }
         });
-
-        // Функция для растягивания фона при прокрутке страницы
-        document.addEventListener('scroll', () => {
-            const scrollTop = document.documentElement.scrollTop;
-            const body = document.body;
-
-            // Проверка на полноэкранный режим
-            if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
-                // Если уже в полноэкранном режиме, растягиваем фон
-                body.style.backgroundSize = `auto ${100 + scrollTop / 5}%`; // Пример растягивания
-            } else {
-                // Если не в полноэкранном режиме, то просто увеличиваем фон
-                body.style.backgroundSize = 'cover';
-            }
-        });
-
-        // Переход в полноэкранный режим
-        const toggleFullScreen = () => {
-            const elem = document.documentElement;
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) {
-                elem.webkitRequestFullscreen();
-            } else if (elem.mozRequestFullScreen) {
-                elem.mozRequestFullScreen();
-            }
-        };
-
-        // Для выхода из полноэкранного режима
-        const exitFullScreen = () => {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            }
-        };
     </script>
+
+    <div class="container">
+        <div class="card">
+            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
+                alt="Товар 1">
+            <p>Товар 1</p>
+        </div>
+        <div class="card">
+            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
+                alt="Товар 2">
+            <p>Товар 2</p>
+        </div>
+        <div class="card">
+            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
+                alt="Товар 3">
+            <p>Товар 3</p>
+        </div>
+        <div class="card">
+            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
+                alt="Товар 4">
+            <p>Товар 4</p>
+        </div>
+        <div class="card">
+            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
+                alt="Товар 5">
+            <p>Товар 5</p>
+        </div>
+    </div>
 </body>
 
 </html>
