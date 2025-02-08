@@ -6,8 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Бронирование стола</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@mui/material@latest/umd/material-ui.development.js"></script>
+    <script src="https://unpkg.com/@mui/lab@latest/umd/material-ui-lab.development.js"></script>
+    <script src="https://unpkg.com/@mui/x-date-pickers@latest/umd/material-ui-x-date-pickers.development.js"></script>
+    <script src="https://unpkg.com/@date-io/date-fns@latest/build/index.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -54,21 +59,18 @@
             cursor: pointer;
         }
 
-        .calendar-input {
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 250px;
-            text-align: center;
+        #root {
+            width: 100%;
+            display: flex;
+            justify-content: center;
         }
     </style>
 </head>
 
 <body>
     <script>
-        Telegram.WebApp.expand(); // Растягиваем приложение на весь экран
-        Telegram.WebApp.enableClosingConfirmation(); // Предотвращаем случайное закрытие
+        Telegram.WebApp.expand();
+        Telegram.WebApp.enableClosingConfirmation();
 
         function enterFullscreen() {
             if (!Telegram.WebApp.isFullscreen) {
@@ -79,22 +81,17 @@
         Telegram.WebApp.onEvent('viewportChanged', function (event) {
             enterFullscreen();
         });
-
-        document.addEventListener("DOMContentLoaded", function () {
-            enterFullscreen();
-            flatpickr("#calendar", {
-                dateFormat: "d-m-Y",
-                locale: "ru"
-            });
-        });
     </script>
+
     <div class="container">
         <img src="your-logo.png" alt="Logo" class="logo">
         <div class="text">
             <p>Добро пожаловать!</p>
             <p>Забронируйте столик в пару кликов и наслаждайтесь уютной атмосферой.</p>
             <p>Выберите дату и время</p>
-            <input type="text" id="calendar" class="calendar-input" placeholder="Выберите дату">
+        </div>
+        <div id="root"></div>
+        <div class="text">
             <p>Укажите количество гостей</p>
             <p>Выберите удобное место</p>
             <p>Нажмите «Забронировать стол»</p>
@@ -102,6 +99,28 @@
         </div>
         <button class="button">ЗАБРОНИРОВАТЬ СТОЛ</button>
     </div>
+
+    <script type="text/babel">
+        const { useState } = React;
+        const { LocalizationProvider, StaticDatePicker } = MaterialUI;
+        const { AdapterDateFns } = MaterialUI;
+        const { TextField } = MaterialUI;
+
+        function Calendar() {
+            const [value, setValue] = useState(new Date());
+            return (
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <StaticDatePicker
+                        displayStaticWrapperAs="desktop"
+                        value={value}
+                        onChange={(newValue) => setValue(newValue)}
+                        renderInput={(params) => <TextField {...params} />}
+                    />
+                </LocalizationProvider>
+            );
+        }
+        ReactDOM.render(<Calendar />, document.getElementById("root"));
+    </script>
 </body>
 
 </html>
