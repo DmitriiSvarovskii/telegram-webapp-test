@@ -15,18 +15,23 @@
             justify-content: center;
             height: 100vh;
             background-color: #f4f4f4;
+            overflow: hidden;
         }
 
         .container {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             gap: 20px;
             padding: 20px;
+            overflow-y: auto;
+            height: 100vh;
+            width: 100%;
         }
 
         .card {
-            width: 250px;
+            width: 90%;
+            max-width: 400px;
             background: white;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -50,11 +55,16 @@
 <body>
     <script>
         Telegram.WebApp.expand(); // Растягиваем приложение на весь экран
+        Telegram.WebApp.enableClosingConfirmation(); // Предотвращаем случайное закрытие
+
+        function enterFullscreen() {
+            if (!Telegram.WebApp.isFullscreen) {
+                Telegram.WebApp.requestFullscreen();
+            }
+        }
 
         Telegram.WebApp.onEvent('viewportChanged', function (event) {
-            if (!Telegram.WebApp.isFullscreen) {
-                Telegram.WebApp.requestFullscreen(); // Запрос на полноэкранный режим
-            }
+            enterFullscreen();
         });
     </script>
 
