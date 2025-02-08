@@ -69,12 +69,7 @@
 
     <script>
         // Ждем загрузки DOM перед запуском WebApp
-        document.addEventListener('DOMContentLoaded', function () {
-            if (window.Telegram && window.Telegram.WebApp) {
-                // Разворачиваем WebApp на весь экран
-                window.Telegram.WebApp.expand();
-            }
-        });
+        tg.requestFullscreen();
 
         const tg = window.Telegram.WebApp;
 
