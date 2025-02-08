@@ -24,12 +24,13 @@
         }
 
         .container {
-            width: 90%;
-            max-width: 400px;
-            background: white;
-            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
             padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            width: 100%;
         }
 
         .form-group {
@@ -82,11 +83,11 @@
             const [value, setValue] = useState(new Date());
             return (
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <StaticDatePicker
-                        displayStaticWrapperAs="desktop"
+                    <DatePicker
+                        label="Выберите дату"
                         value={value}
                         onChange={(newValue) => setValue(newValue)}
-                        renderInput={(params) => <TextField {...params} fullWidth />}
+                        renderInput={(params) => <TextField {...params} />}
                     />
                 </LocalizationProvider>
             );
