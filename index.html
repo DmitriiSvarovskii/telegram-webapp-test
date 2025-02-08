@@ -16,27 +16,11 @@
             transition: filter 0.3s ease, opacity 0.3s ease;
             position: relative;
             height: var(--tg-viewport-height);
-            /* Используем переменную для адаптации под экран */
             overflow: hidden;
         }
 
         h1 {
             color: #333;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 18px;
-            background: #0088cc;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-
-        button:hover {
-            background: #0077b3;
         }
 
         #image-container {
@@ -51,112 +35,29 @@
             border-radius: 10px;
             transition: filter 0.3s ease, opacity 0.3s ease;
         }
-
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: black;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 9999;
-            pointer-events: none;
-        }
     </style>
 </head>
 
 <body>
     <h1>Protected WebApp</h1>
     <div id="image-container">
-        <img id="main-image" src="https://source.unsplash.com/random/400x400" alt="Random Image">
+        <img id="main-image" src="https://source.unsplash.com/featured/?mountains" alt="Random Image">
     </div>
-    <button id="fullscreen-btn">Enter Fullscreen</button>
-    <button id="tg-btn">Close WebApp</button>
-
-    <div id="overlay"></div>
 
     <script>
-        // Ждем загрузки DOM перед запуском WebApp
         document.addEventListener('DOMContentLoaded', function () {
             if (window.Telegram && window.Telegram.WebApp) {
-                // Разворачиваем WebApp на весь экран
-                window.Telegram.WebApp.expand();
-            }
-        });
-
-        const tg = window.Telegram.WebApp;
-
-        // Закрыть WebApp при нажатии на кнопку
-        document.getElementById("tg-btn").addEventListener("click", () => {
-            tg.close();
-        });
-
-        // Включить полноэкранный режим
-        document.getElementById("fullscreen-btn").addEventListener("click", () => {
-            tg.requestFullscreen();
-        });
-
-        // Слушаем событие изменения полноэкранного режима
-        tg.onEvent("fullscreenChanged", () => {
-            console.log("Fullscreen mode changed. Is fullscreen: ", tg.isFullscreen);
-        });
-
-        // === Размытие контента при переключении окон ===
-        document.addEventListener("visibilitychange", () => {
-            if (document.hidden) {
-                document.getElementById("main-image").style.filter = "blur(30px)";
-            } else {
-                document.getElementById("main-image").style.filter = "none";
-            }
-        });
-
-        // === Блокировка скриншотов: затемнение экрана ===
-        function blockScreenshot() {
-            document.getElementById("overlay").style.opacity = "1";  // Затемняем экран
-            setTimeout(() => {
-                document.getElementById("overlay").style.opacity = "0";  // Убираем затемнение через 1 сек
-            }, 1000);
-        }
-
-        // Перехватываем сочетание клавиш скриншота (работает в большинстве браузеров)
-        window.addEventListener("keydown", (e) => {
-            if (e.key === "PrintScreen") {
-                blockScreenshot();
-            }
-        });
-
-        // Перехватываем попытку сделать снимок экрана на мобильных устройствах
-        window.addEventListener("blur", () => {
-            blockScreenshot();
-        });
-
-        // === Блокировка прокрутки ===
-        tg.onEvent("viewportChanged", (event) => {
-            if (event.isStateStable) {
-                // Отключаем прокрутку, если MiniApp переходит в стабильное состояние
-                document.body.style.overflow = "hidden";  // Блокируем прокрутку
-            } else {
-                // Разрешаем прокрутку при нестабильном состоянии
-                document.body.style.overflow = "auto";  // Разрешаем прокрутку
-            }
-        });
-        // Автоматически переводим приложение в полноэкранный режим после загрузки
-        document.addEventListener('DOMContentLoaded', function () {
-            if (window.Telegram && window.Telegram.WebApp) {
+                Telegram.WebApp.expand();
                 Telegram.WebApp.requestFullscreen();
             }
         });
 
-        // Предотвращаем выход из полноэкранного режима
         Telegram.WebApp.onEvent('fullscreenChanged', function () {
             if (!this.isFullscreen) {
                 Telegram.WebApp.requestFullscreen();
             }
         });
 
-        // Следим за изменением области просмотра и предотвращаем сворачивание
         Telegram.WebApp.onEvent('viewportChanged', function (event) {
             if (!event.isStateStable) {
                 Telegram.WebApp.requestFullscreen();
