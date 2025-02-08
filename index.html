@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram WebApp</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background: #0088cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0077b3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welcome to Telegram WebApp</h1>
+    <button id="tg-btn">Close WebApp</button>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();  // Разворачиваем WebApp на весь экран
+
+        document.getElementById("tg-btn").addEventListener("click", () => {
+            tg.close();
+        });
+
+        // === АНТИСКРИНШОТ ЗАЩИТА ===
+        const overlay = document.createElement("canvas");
+        overlay.style.position = "fixed";
+        overlay.style.top = "0";
+        overlay.style.left = "0";
+        overlay.style.width = "100vw";
+        overlay.style.height = "100vh";
+        overlay.style.pointerEvents = "none";
+        overlay.style.zIndex = "9999";
+        document.body.appendChild(overlay);
+
+        const ctx = overlay.getContext("2d");
+
+        function generateNoise() {
+            const width = overlay.width = window.innerWidth;
+            const height = overlay.height = window.innerHeight;
+            const imageData = ctx.createImageData(width, height);
+            const buffer = new Uint32Array(imageData.data.buffer);
+
+            for (let i = 0; i < buffer.length; i++) {
+                buffer[i] = Math.random() < 0.5 ? 0xff000000 : 0xffffffff; // Черные и белые пиксели
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        setInterval(generateNoise, 100);  // Каждые 100 мс обновляем шум
+    </script>
+</body>
+
+</html>
