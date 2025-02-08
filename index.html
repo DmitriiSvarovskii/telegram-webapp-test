@@ -10,13 +10,15 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #f4f4f4;
+            background: url('https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg') no-repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
             margin: 0;
             padding: 20px;
             transition: filter 0.3s ease, opacity 0.3s ease;
-            position: relative;
-            height: var(--tg-viewport-height);
-            overflow: hidden;
+            height: auto;
+            min-height: 100vh;
+            overflow: auto;
         }
 
         h1 {
@@ -40,26 +42,8 @@
 
 <body>
     <h1>Protected WebApp</h1>
-    <div id="image-container">
-        <img id="main-image"
-            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
-            alt="Random Image">
-    </div>
-    <div id="image-container">
-        <img id="main-image"
-            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
-            alt="Random Image">
-    </div>
-    <div id="image-container">
-        <img id="main-image"
-            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
-            alt="Random Image">
-    </div>
-    <div id="image-container">
-        <img id="main-image"
-            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
-            alt="Random Image">
-    </div>
+
+    <!-- Добавляем больше контента для теста скролла -->
     <div id="image-container">
         <img id="main-image"
             src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
@@ -84,22 +68,9 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             if (window.Telegram && window.Telegram.WebApp) {
-                // Telegram.WebApp.expand();
                 Telegram.WebApp.requestFullscreen();
             }
         });
-
-        // Telegram.WebApp.onEvent('fullscreenChanged', function () {
-        //     if (!this.isFullscreen) {
-        //         Telegram.WebApp.requestFullscreen();
-        //     }
-        // });
-
-        // Telegram.WebApp.onEvent('viewportChanged', function (event) {
-        //     if (!event.isStateStable) {
-        //         Telegram.WebApp.requestFullscreen();
-        //     }
-        // });
     </script>
 </body>
 
