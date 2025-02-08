@@ -44,7 +44,7 @@
         });
     </script>
     <div class="photo-container">
-        <img id="photo" src="/static/1.jpg" alt="Фото">
+        <img id="photo" src="1.jpg" alt="Фото">
     </div>
 
     <script>
@@ -54,7 +54,7 @@
         
         photoElement.addEventListener("click", () => {
             currentIndex = (currentIndex + 1) % photos.length;
-            photoElement.src = `/static/${photos[currentIndex]}`;
+            photoElement.src = `${photos[currentIndex]}`;
         });
     </script>
 </body>
