@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Фото-слайдер</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             margin: 0;
@@ -12,8 +14,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 200vh; /* Позволяет тянуть страницу вниз */
+            height: 200vh;
+            /* Позволяет тянуть страницу вниз */
         }
+
         .photo-container {
             display: flex;
             justify-content: center;
@@ -22,6 +26,7 @@
             width: 100%;
             position: relative;
         }
+
         .photo-container img {
             max-width: 100%;
             max-height: 100%;
@@ -29,6 +34,7 @@
         }
     </style>
 </head>
+
 <body>
     <script>
         Telegram.WebApp.expand();
@@ -51,11 +57,12 @@
         const photos = ["1.jpg", "2.jpg", "3.jpg", "4.jpg"];
         let currentIndex = 0;
         const photoElement = document.getElementById("photo");
-        
+
         photoElement.addEventListener("click", () => {
             currentIndex = (currentIndex + 1) % photos.length;
             photoElement.src = `${photos[currentIndex]}`;
         });
     </script>
 </body>
+
 </html>
