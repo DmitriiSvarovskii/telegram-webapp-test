@@ -1,62 +1,38 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Полноэкранное WebApp</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Фото-слайдер</title>
     <style>
         body {
             margin: 0;
+            padding: 0;
+            background-color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
+            height: 200vh; /* Позволяет тянуть страницу вниз */
+        }
+        .photo-container {
+            display: flex;
             justify-content: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-            overflow: hidden;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 20px;
-            padding: 20px;
-            overflow-y: auto;
+            height: 100vh;
             width: 100%;
+            position: relative;
         }
-
-        .card {
-            width: 90%;
-            max-width: 400px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            text-align: center;
-            min-height: 200px;
-        }
-
-        .card img {
-            width: 100%;
-            height: auto;
-        }
-
-        .card p {
-            padding: 10px;
-            font-size: 18px;
-            font-weight: bold;
+        .photo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            cursor: pointer;
         }
     </style>
 </head>
-
 <body>
     <script>
-        Telegram.WebApp.expand(); // Растягиваем приложение на весь экран
-        // Telegram.WebApp.enableClosingConfirmation(); // Предотвращаем случайное закрытие
-
+        Telegram.WebApp.expand();
+        // Telegram.WebApp.enableClosingConfirmation();
         function enterFullscreen() {
             if (!Telegram.WebApp.isFullscreen) {
                 Telegram.WebApp.requestFullscreen();
@@ -67,34 +43,19 @@
             enterFullscreen();
         });
     </script>
-
-    <div class="container">
-        <div class="card">
-            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
-                alt="Товар 1">
-            <p>Товар 1</p>
-        </div>
-        <div class="card">
-            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
-                alt="Товар 2">
-            <p>Товар 2</p>
-        </div>
-        <div class="card">
-            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
-                alt="Товар 3">
-            <p>Товар 3</p>
-        </div>
-        <div class="card">
-            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
-                alt="Товар 4">
-            <p>Товар 4</p>
-        </div>
-        <div class="card">
-            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
-                alt="Товар 5">
-            <p>Товар 5</p>
-        </div>
+    <div class="photo-container">
+        <img id="photo" src="/static/1.jpg" alt="Фото">
     </div>
-</body>
 
+    <script>
+        const photos = ["1.jpg", "2.jpg", "3.jpg", "4.jpg"];
+        let currentIndex = 0;
+        const photoElement = document.getElementById("photo");
+        
+        photoElement.addEventListener("click", () => {
+            currentIndex = (currentIndex + 1) % photos.length;
+            photoElement.src = `/static/${photos[currentIndex]}`;
+        });
+    </script>
+</body>
 </html>
