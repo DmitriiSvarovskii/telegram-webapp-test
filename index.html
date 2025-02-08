@@ -142,6 +142,26 @@
                 document.body.style.overflow = "auto";  // Разрешаем прокрутку
             }
         });
+        // Автоматически переводим приложение в полноэкранный режим после загрузки
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.Telegram && window.Telegram.WebApp) {
+                Telegram.WebApp.requestFullscreen();
+            }
+        });
+
+        // Предотвращаем выход из полноэкранного режима
+        Telegram.WebApp.onEvent('fullscreenChanged', function () {
+            if (!this.isFullscreen) {
+                Telegram.WebApp.requestFullscreen();
+            }
+        });
+
+        // Следим за изменением области просмотра и предотвращаем сворачивание
+        Telegram.WebApp.onEvent('viewportChanged', function (event) {
+            if (!event.isStateStable) {
+                Telegram.WebApp.requestFullscreen();
+            }
+        });
     </script>
 </body>
 
