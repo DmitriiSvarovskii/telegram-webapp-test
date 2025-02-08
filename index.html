@@ -54,7 +54,16 @@
 <body>
     <script>
         Telegram.WebApp.expand();
-        Telegram.WebApp.enableClosingConfirmation();
+        // Telegram.WebApp.enableClosingConfirmation();
+        function enterFullscreen() {
+            if (!Telegram.WebApp.isFullscreen) {
+                Telegram.WebApp.requestFullscreen();
+            }
+        }
+
+        Telegram.WebApp.onEvent('viewportChanged', function (event) {
+            enterFullscreen();
+        });
     </script>
 
     <div class="container">
