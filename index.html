@@ -12,43 +12,33 @@
             text-align: center;
             background-color: #f4f4f4;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             transition: filter 0.3s ease, opacity 0.3s ease;
             position: relative;
-            height: var(--tg-viewport-height);
-            /* Используем переменную для адаптации под экран */
+            height: 100vh;
+            /* Используем 100vh для правильной адаптации */
             overflow: hidden;
         }
 
         h1 {
             color: #333;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 18px;
-            background: #0088cc;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
             margin-top: 20px;
         }
 
-        button:hover {
-            background: #0077b3;
-        }
-
         #image-container {
-            width: 80%;
-            max-width: 400px;
-            margin: 20px auto;
-            position: relative;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: black;
+            z-index: -1;
         }
 
         #main-image {
+            object-fit: cover;
             width: 100%;
-            border-radius: 10px;
+            height: 100%;
             transition: filter 0.3s ease, opacity 0.3s ease;
         }
 
@@ -70,10 +60,10 @@
 <body>
     <h1>Protected WebApp</h1>
     <div id="image-container">
-        <img id="main-image" src="https://source.unsplash.com/random/400x400" alt="Random Image">
+        <img id="main-image"
+            src="https://images.unsplash.com/photo-1604524425934-268046c64359?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhY2h8MXx8bW91bnRhaW5oYWx8ZW58MHx8fHwxNjA2Nzg2NzQ0&ixlib=rb-1.2.1&q=80&w=1080"
+            alt="Mountains">
     </div>
-    <button id="fullscreen-btn">Enter Fullscreen</button>
-    <button id="tg-btn">Close WebApp</button>
 
     <div id="overlay"></div>
 
@@ -87,21 +77,6 @@
         });
 
         const tg = window.Telegram.WebApp;
-
-        // Закрыть WebApp при нажатии на кнопку
-        document.getElementById("tg-btn").addEventListener("click", () => {
-            tg.close();
-        });
-
-        // Включить полноэкранный режим
-        document.getElementById("fullscreen-btn").addEventListener("click", () => {
-            tg.requestFullscreen();
-        });
-
-        // Слушаем событие изменения полноэкранного режима
-        tg.onEvent("fullscreenChanged", () => {
-            console.log("Fullscreen mode changed. Is fullscreen: ", tg.isFullscreen);
-        });
 
         // === Размытие контента при переключении окон ===
         document.addEventListener("visibilitychange", () => {
