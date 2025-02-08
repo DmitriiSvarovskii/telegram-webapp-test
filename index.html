@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Полноэкранное WebApp</title>
+    <title>Бронирование стола</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
@@ -14,40 +14,32 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background-color: #f4f4f4;
-            overflow: hidden;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            padding: 20px;
-            overflow-y: auto;
-            width: 100%;
-        }
-
-        .card {
-            width: 90%;
-            max-width: 400px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            background-color: #ffffff;
             text-align: center;
-            min-height: 200px;
+            font-family: Arial, sans-serif;
+            padding: 20px;
         }
 
-        .card img {
-            width: 100%;
-            height: auto;
+        .logo {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 20px;
         }
 
-        .card p {
-            padding: 10px;
-            font-size: 18px;
-            font-weight: bold;
+        .text {
+            font-size: 16px;
+            color: #000;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            background-color: #333;
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -68,33 +60,17 @@
         });
     </script>
 
-    <div class="container">
-        <div class="card">
-            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
-                alt="Товар 1">
-            <p>Товар 1</p>
-        </div>
-        <div class="card">
-            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
-                alt="Товар 2">
-            <p>Товар 2</p>
-        </div>
-        <div class="card">
-            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
-                alt="Товар 3">
-            <p>Товар 3</p>
-        </div>
-        <div class="card">
-            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
-                alt="Товар 4">
-            <p>Товар 4</p>
-        </div>
-        <div class="card">
-            <img src="https://cdnn1.img.sputnik.az/img/42372/23/423722305_0:51:1600:951_1920x0_80_0_0_544636435fceebfcf5c57391b0cb7052.jpg"
-                alt="Товар 5">
-            <p>Товар 5</p>
-        </div>
+    <img src="your-logo.png" alt="Logo" class="logo">
+    <div class="text">
+        <p>Добро пожаловать!</p>
+        <p>Забронируйте столик в пару кликов и наслаждайтесь уютной атмосферой.</p>
+        <p>Выберите дату и время</p>
+        <p>Укажите количество гостей</p>
+        <p>Выберите удобное место</p>
+        <p>Нажмите «Забронировать стол»</p>
+        <p>P.S. Здесь будет указан Ваш реальный текст</p>
     </div>
+    <button class="button">ЗАБРОНИРОВАТЬ СТОЛ</button>
 </body>
 
 </html>
