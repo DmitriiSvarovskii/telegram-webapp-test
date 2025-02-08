@@ -7,83 +7,110 @@
     <title>Telegram WebApp Fullscreen</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background: url('https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg') no-repeat center center;
-            background-size: cover;
-            background-attachment: fixed;
-            min-height: 100vh;
-            overflow: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background-color: #f4f4f4;
+            margin: 0;
             padding: 20px;
+            transition: filter 0.3s ease, opacity 0.3s ease;
+            position: relative;
+            height: var(--tg-viewport-height);
+            overflow: hidden;
+            background-size: cover;
+            /* Фон по умолчанию */
+            background-image: url('https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg');
+            /* Пример фона */
         }
 
         h1 {
             color: #333;
-            margin-top: 0;
         }
 
-        #content {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .image-container {
+        #image-container {
             width: 80%;
             max-width: 400px;
-            margin: 20px 0;
+            margin: 20px auto;
+            position: relative;
         }
 
-        .main-image {
+        #main-image {
             width: 100%;
             border-radius: 10px;
+            transition: filter 0.3s ease, opacity 0.3s ease;
         }
     </style>
 </head>
 
 <body>
     <h1>Protected WebApp</h1>
-
-    <div id="content">
-        <div class="image-container">
-            <img class="main-image"
-                src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
-                alt="Random Image">
-        </div>
-        <div class="image-container">
-            <img class="main-image"
-                src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
-                alt="Random Image">
-        </div>
-        <div class="image-container">
-            <img class="main-image"
-                src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
-                alt="Random Image">
-        </div>
-        <div class="image-container">
-            <img class="main-image"
-                src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
-                alt="Random Image">
-        </div>
+    <div id="image-container">
+        <img id="main-image"
+            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
+            alt="Random Image">
+    </div>
+    <div id="image-container">
+        <img id="main-image"
+            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
+            alt="Random Image">
+    </div>
+    <div id="image-container">
+        <img id="main-image"
+            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
+            alt="Random Image">
+    </div>
+    <div id="image-container">
+        <img id="main-image"
+            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
+            alt="Random Image">
     </div>
 
     <script>
+        // Запрос на полноэкранный режим при загрузке страницы
         document.addEventListener('DOMContentLoaded', function () {
             if (window.Telegram && window.Telegram.WebApp) {
+                // Telegram.WebApp.expand();
                 Telegram.WebApp.requestFullscreen();
             }
         });
+
+        // Функция для растягивания фона при прокрутке страницы
+        document.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const body = document.body;
+
+            // Проверка на полноэкранный режим
+            if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
+                // Если уже в полноэкранном режиме, растягиваем фон
+                body.style.backgroundSize = `auto ${100 + scrollTop / 5}%`; // Пример растягивания
+            } else {
+                // Если не в полноэкранном режиме, то просто увеличиваем фон
+                body.style.backgroundSize = 'cover';
+            }
+        });
+
+        // Переход в полноэкранный режим
+        const toggleFullScreen = () => {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen();
+            }
+        };
+
+        // Для выхода из полноэкранного режима
+        const exitFullScreen = () => {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            }
+        };
     </script>
 </body>
 
