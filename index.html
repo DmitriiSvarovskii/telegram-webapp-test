@@ -41,28 +41,65 @@
 <body>
     <h1>Protected WebApp</h1>
     <div id="image-container">
-        <img id="main-image" src="https://source.unsplash.com/featured/?mountains" alt="Random Image">
+        <img id="main-image"
+            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
+            alt="Random Image">
+    </div>
+    <div id="image-container">
+        <img id="main-image"
+            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
+            alt="Random Image">
+    </div>
+    <div id="image-container">
+        <img id="main-image"
+            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
+            alt="Random Image">
+    </div>
+    <div id="image-container">
+        <img id="main-image"
+            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
+            alt="Random Image">
+    </div>
+    <div id="image-container">
+        <img id="main-image"
+            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
+            alt="Random Image">
+    </div>
+    <div id="image-container">
+        <img id="main-image"
+            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
+            alt="Random Image">
+    </div>
+    <div id="image-container">
+        <img id="main-image"
+            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
+            alt="Random Image">
+    </div>
+    <div id="image-container">
+        <img id="main-image"
+            src="https://moya-planeta.ru/upload/images/xl/85/ec/85ec639804ea05eb0d5bf4e6793c540e5951d508.jpg"
+            alt="Random Image">
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             if (window.Telegram && window.Telegram.WebApp) {
-                Telegram.WebApp.expand();
+                // Telegram.WebApp.expand();
                 Telegram.WebApp.requestFullscreen();
             }
         });
 
-        Telegram.WebApp.onEvent('fullscreenChanged', function () {
-            if (!this.isFullscreen) {
-                Telegram.WebApp.requestFullscreen();
-            }
-        });
+        // Telegram.WebApp.onEvent('fullscreenChanged', function () {
+        //     if (!this.isFullscreen) {
+        //         Telegram.WebApp.requestFullscreen();
+        //     }
+        // });
 
-        Telegram.WebApp.onEvent('viewportChanged', function (event) {
-            if (!event.isStateStable) {
-                Telegram.WebApp.requestFullscreen();
-            }
-        });
+        // Telegram.WebApp.onEvent('viewportChanged', function (event) {
+        //     if (!event.isStateStable) {
+        //         Telegram.WebApp.requestFullscreen();
+        //     }
+        // });
     </script>
 </body>
 
