@@ -14,6 +14,8 @@
         body {
             height: 100%;
             margin: 0;
+            /* overflow: auto; */
+            /* overflow: hidden; */
             background-color: #343637;
             color: #fff;
             font-family: 'Roboto', Arial, sans-serif;
@@ -22,16 +24,17 @@
         /* Контейнер для скролла и центрирования содержимого */
         .scroll-container {
             max-height: calc(100vh - 50px);
+            min-height: 100vh;
             width: 100%;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             display: flex;
-            align-items: flex-start;
-            /* чтобы содержимое не центрировалось вертикально */
+            align-items: center;
             justify-content: center;
             padding: 20px;
             padding-top: 50px;
-            /* отступ сверху */
+            margin-top: 50px;
+            padding-bottom: calc(20px + env(safe-area-inset-bottom));
             box-sizing: border-box;
         }
 
