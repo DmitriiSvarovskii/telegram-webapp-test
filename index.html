@@ -4,12 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css?family=Roboto:400&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- Добавляем viewport-fit=cover для корректного отображения на устройствах с вырезами -->
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>Форма данных</title>
     <!-- Подключаем Cropper.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <style>
-        /* Отключаем прокрутку для всего окна */
+        /* Центрируем форму с помощью flex */
         html,
         body {
             height: 100%;
@@ -18,20 +20,24 @@
             background-color: #343637;
             color: #ffffff;
             font-family: 'Roboto', Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Предотвращаем перетягивание (bounce) */
+            overscroll-behavior: none;
         }
 
-        /* Контейнер, который будет скроллиться */
+        /* Скроллится только контейнер с формой */
         .scroll-container {
+            width: 100%;
+            max-width: 500px;
             height: 100%;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            /* Плавная прокрутка для iOS */
+            overscroll-behavior: contain;
         }
 
         .container {
-            width: 90%;
-            max-width: 500px;
-            margin: 20px auto;
             padding: 20px;
             box-sizing: border-box;
         }
@@ -91,7 +97,7 @@
 <body>
     <div class="scroll-container">
         <div class="container">
-            <!-- Здесь размещаем форму -->
+            <!-- Форма данных -->
             <form id="dataForm">
                 <input type="text" id="surname" name="surname" placeholder="Фамилия" required>
                 <input type="text" id="name" name="name" placeholder="Имя" required>
@@ -117,24 +123,29 @@
             </form>
         </div>
     </div>
+
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         Telegram.WebApp.expand();
-        // Telegram.WebApp.enableClosingConfirmation();
         function enterFullscreen() {
             if (!Telegram.WebApp.isFullscreen) {
                 Telegram.WebApp.requestFullscreen();
             }
         }
-
         Telegram.WebApp.onEvent('viewportChanged', function (event) {
             enterFullscreen();
         });
 
-        document.getElementById('open-form').addEventListener('click', function () {
-            document.getElementById('form-container').classList.add('show');
+        // При касании вне интерактивных элементов снимаем фокус (попытка скрыть клавиатуру)
+        document.addEventListener('touchstart', function (event) {
+            if (!event.target.closest('input, textarea, button, select')) {
+                if (document.activeElement && document.activeElement.blur) {
+                    document.activeElement.blur();
+                }
+            }
         });
     </script>
+
     <!-- Подключаем Cropper.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script>
@@ -155,7 +166,7 @@
                         cropper.destroy();
                     }
                     cropper = new Cropper(imagePreview, {
-                        aspectRatio: 441 / 555, // Целевое соотношение сторон
+                        aspectRatio: 441 / 555,
                         viewMode: 1,
                     });
                 };
@@ -166,12 +177,10 @@
         // Обработка нажатия кнопки "Обрезать изображение"
         cropButton.addEventListener('click', () => {
             if (cropper) {
-                // Обрезаем до заданных размеров: 441 x 555
                 const canvas = cropper.getCroppedCanvas({
                     width: 441,
                     height: 555,
                 });
-                // Обновляем предпросмотр и сохраняем данные в скрытом поле
                 imagePreview.src = canvas.toDataURL();
                 cropper.destroy();
                 cropper = null;
@@ -182,7 +191,6 @@
         // Отправка данных формы в Telegram бота
         document.getElementById('dataForm').addEventListener('submit', function (e) {
             e.preventDefault();
-
 
             const data = {
                 first_name: document.getElementById('name').value,
