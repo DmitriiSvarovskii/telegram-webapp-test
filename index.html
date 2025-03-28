@@ -1,257 +1,206 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Web App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Форма данных</title>
+    <!-- Подключаем Cropper.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <style>
+        /* Полноэкранный режим */
         body {
-            background-color: #fff;
+            margin: 0;
+            padding: 0;
+            background-color: #343637;
+            color: #ffffff;
             font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
         .container {
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Стили для полей ввода */
+        input[type="text"],
+        input[type="date"],
+        input[type="file"] {
             width: 100%;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
         }
 
-        .greeting {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .button {
-            background-color: #333;
-            color: #fff;
+        /* Стили для кнопок */
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #1e1e20;
+            color: #ffffff;
             border: none;
-            padding: 10px 20px;
-            font-size: 16px;
+            border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        /* Контейнер для предпросмотра изображения */
+        .img-container {
+            width: 100%;
+            max-height: 300px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #imagePreview {
+            max-width: 100%;
+            display: block;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div class="greeting">Приветствие! Ожидаем данные.</div>
-        <button class="button" id="send-initData">Отправить initData</button>
-    </div>
+        <form id="dataForm">
+            <input type="text" id="surname" name="surname" placeholder="Фамилия" required>
+            <input type="text" id="name" name="name" placeholder="Имя" required>
+            <input type="text" id="city" name="city" placeholder="Город" required>
+            <input type="date" id="birthdate" name="birthdate" placeholder="Дата рождения" required>
+            <input type="text" id="region" name="region" placeholder="Область" required>
 
+            <label for="imageInput">Загрузите изображение</label>
+            <input type="file" id="imageInput" accept="image/*" required>
+
+            <div class="img-container">
+                <img id="imagePreview" alt="Предварительный просмотр">
+            </div>
+
+            <!-- Кнопка для обрезки изображения -->
+            <button type="button" id="cropButton">Обрезать изображение</button>
+
+            <!-- Скрытое поле для хранения обрезанного изображения -->
+            <input type="hidden" id="croppedImage" name="croppedImage">
+
+            <!-- Кнопка подтверждения -->
+            <button type="submit">Подтвердить</button>
+        </form>
+    </div>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         Telegram.WebApp.expand();
+        // Telegram.WebApp.enableClosingConfirmation();
+        function enterFullscreen() {
+            if (!Telegram.WebApp.isFullscreen) {
+                Telegram.WebApp.requestFullscreen();
+            }
+        }
 
-        // Получаем initData при запуске Web App
-        const initData = Telegram.WebApp.initData;
+        Telegram.WebApp.onEvent('viewportChanged', function (event) {
+            enterFullscreen();
+        });
 
-        // Функция для отправки initData обратно через сообщение
-        function sendInitData() {
-            // Вы можете отправить initData куда угодно, например, в чат или использовать в другом месте
-            console.log('initData:', initData);
+        document.getElementById('open-form').addEventListener('click', function () {
+            document.getElementById('form-container').classList.add('show');
+        });
+    </script>
+    <!-- Подключаем Cropper.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script>
+        let cropper;
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const cropButton = document.getElementById('cropButton');
+        const croppedImageInput = document.getElementById('croppedImage');
 
-            // Например, отправляем через API Telegram Bot в чат (этот код можно заменить на API вашего бота)
-            fetch('https://api.telegram.org/bot7819818690:AAEHWwWzxGo9ENY2uvyjrgBpD-5F8FQhalc/sendMessage', {
+        // Загрузка и инициализация Cropper.js при выборе файла
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    imagePreview.src = event.target.result;
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    cropper = new Cropper(imagePreview, {
+                        aspectRatio: 441 / 555, // Целевое соотношение сторон
+                        viewMode: 1,
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Обработка нажатия кнопки "Обрезать изображение"
+        cropButton.addEventListener('click', () => {
+            if (cropper) {
+                // Обрезаем до заданных размеров: 441 x 555
+                const canvas = cropper.getCroppedCanvas({
+                    width: 441,
+                    height: 555,
+                });
+                // Обновляем предпросмотр и сохраняем данные в скрытом поле
+                imagePreview.src = canvas.toDataURL();
+                cropper.destroy();
+                cropper = null;
+                croppedImageInput.value = canvas.toDataURL();
+            }
+        });
+
+        // Отправка данных формы в Telegram бота
+        document.getElementById('dataForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const data = {
+                surname: document.getElementById('surname').value,
+                name: document.getElementById('name').value,
+                city: document.getElementById('city').value,
+                birthdate: document.getElementById('birthdate').value,
+                region: document.getElementById('region').value,
+                croppedImage: document.getElementById('croppedImage').value
+            };
+
+            fetch('https://acde-2a04-5201-1-00-dc.ngrok-free.app/get_data', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    chat_id: '7608636717',
-                    text: `Получено initData: ${initData}`
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Данные успешно отправлены!');
+                    } else {
+                        alert('Ошибка при отправке данных.');
+                    }
                 })
-            }).then(response => response.json())
-                .then(data => console.log(data))
-                .catch(error => console.error('Ошибка:', error));
-        }
-
-        // Обработчик клика по кнопке для отправки initData
-        document.getElementById('send-initData').addEventListener('click', function () {
-            sendInitData();
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    alert('Ошибка при отправке данных.');
+                });
         });
     </script>
 </body>
 
 </html>
-
-<!-- <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Web App</title>
-    <style>
-        body {
-            background-color: #fff;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .greeting {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .button {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .form-container {
-            display: none;
-            margin-top: 20px;
-        }
-        .form-container.show {
-            display: block;
-        }
-        .form-group {
-            margin-bottom: 10px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .form-group input[type="date"] {
-            width: 100%;
-            height: 30px;
-            padding: 5px;
-            font-size: 16px;
-        }
-        .form-group input[type="time"] {
-            width: 100%;
-            height: 30px;
-            padding: 5px;
-            font-size: 16px;
-        }
-        .form-group input[type="number"] {
-            width: 100%;
-            height: 30px;
-            padding: 5px;
-            font-size: 16px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="greeting">Приветствие!</div>
-        <button class="button" id="open-form">ЗАБРОНИРОВАТЬ</button>
-        <div class="form-container" id="form-container">
-            <form>
-                <div class="form-group">
-                    <label for="date">Дата:</label>
-                    <input type="date" id="date" name="date">
-                </div>
-                <div class="form-group">
-                    <label for="time">Время:</label>
-                    <input type="time" id="time" name="time">
-                </div>
-                <div class="form-group">
-                    <label for="guests">Количество гостей:</label>
-                    <input type="number" id="guests" name="guests">
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>
-        Telegram.WebApp.expand();
-        // Telegram.WebApp.enableClosingConfirmation();
-        function enterFullscreen() {
-            if (!Telegram.WebApp.isFullscreen) {
-                Telegram.WebApp.requestFullscreen();
-            }
-        }
-
-        Telegram.WebApp.onEvent('viewportChanged', function (event) {
-            enterFullscreen();
-        });
-
-        document.getElementById('open-form').addEventListener('click', function() {
-            document.getElementById('form-container').classList.add('show');
-        });
-    </script>
-</body>
-</html> -->
-<!-- <!DOCTYPE html>
-<html lang="ru">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Фото-слайдер</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 200vh;
-            /* Позволяет тянуть страницу вниз */
-        }
-
-        .photo-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            width: 100%;
-            position: relative;
-        }
-
-        .photo-container img {
-            max-width: 100%;
-            max-height: 100%;
-            cursor: pointer;
-        }
-    </style>
-</head>
-
-<body>
-    <script>
-        Telegram.WebApp.expand();
-        // Telegram.WebApp.enableClosingConfirmation();
-        function enterFullscreen() {
-            if (!Telegram.WebApp.isFullscreen) {
-                Telegram.WebApp.requestFullscreen();
-            }
-        }
-
-        Telegram.WebApp.onEvent('viewportChanged', function (event) {
-            enterFullscreen();
-        });
-    </script>
-    <div class="photo-container">
-        <img id="photo" src="1.jpg" alt="Фото">
-    </div>
-
-    <script>
-        const photos = ["1.jpg", "2.jpg", "3.jpg", "4.jpg"];
-        let currentIndex = 0;
-        const photoElement = document.getElementById("photo");
-
-        photoElement.addEventListener("click", () => {
-            currentIndex = (currentIndex + 1) % photos.length;
-            photoElement.src = `${photos[currentIndex]}`;
-        });
-    </script>
-</body>
-
-</html> -->
