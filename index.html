@@ -53,7 +53,7 @@
             color: #fff;
         }
 
-        /* Кастомное поле выбора даты – label, по клику открывается скрытый input */
+        /* Кастомное поле выбора даты */
         .custom-date-label {
             display: inline-block;
             width: 100%;
@@ -114,7 +114,7 @@
             opacity: 0.9;
         }
 
-        /* Область для обрезки изображения – скрыта по умолчанию */
+        /* Область для обрезки изображения */
         #cropSection {
             display: none;
             margin-bottom: 15px;
@@ -135,8 +135,8 @@
             display: block;
         }
 
-        /* Модальное окно */
-        #modal {
+        /* Стили для модальных окон */
+        .modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -149,7 +149,7 @@
             z-index: 9999;
         }
 
-        #modalContent {
+        .modal-content {
             background: #1e1e20;
             padding: 20px;
             border-radius: 5px;
@@ -158,7 +158,7 @@
             width: 80%;
         }
 
-        #modalContent p {
+        .modal-content p {
             margin-bottom: 15px;
         }
     </style>
@@ -194,11 +194,19 @@
         </div>
     </div>
 
-    <!-- Модальное окно -->
-    <div id="modal">
-        <div id="modalContent">
+    <!-- Модальное окно, которое показывается сразу после нажатия "Подтвердить" -->
+    <div id="modalImmediate" class="modal">
+        <div class="modal-content">
             <p>Документы будут отправлены в ближайшее время в чат</p>
-            <button id="modalOk">Ок</button>
+            <button id="modalImmediateOk">Ок</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно, которое показывается после положительного ответа от сервера -->
+    <div id="modalFinal" class="modal">
+        <div class="modal-content">
+            <p>Ваши документы уже в чате</p>
+            <button id="modalFinalOk">Ок</button>
         </div>
     </div>
 
@@ -231,7 +239,8 @@
         const dateInput = document.getElementById('birthdate');
         const dateLabel = document.getElementById('dateLabel');
         const form = document.getElementById('dataForm');
-        const modal = document.getElementById('modal');
+        const modalImmediate = document.getElementById('modalImmediate');
+        const modalFinal = document.getElementById('modalFinal');
 
         // При выборе файла – отображаем область для обрезки и обновляем текст кнопки
         imageInput.addEventListener('change', (e) => {
@@ -276,11 +285,20 @@
             }
         });
 
-        // Отправка формы с fetch. При успешном ответе показываем модальное окно.
+        // При клике на "Ок" в первом модальном окне – просто закрываем его
+        document.getElementById('modalImmediateOk').addEventListener('click', function () {
+            modalImmediate.style.display = "none";
+        });
+
+        // Отправка формы
         form.addEventListener('submit', function (e) {
             e.preventDefault();
-            // Собираем данные формы
-            const userId = Telegram.WebApp.initDataUnsafe.user.id;
+
+            // Показываем модальное окно сразу после нажатия "Подтвердить"
+            modalImmediate.style.display = "flex";
+
+            // Собираем данные формы, добавляем user_id, если нужно (пример ниже)
+            const userId = Telegram.WebApp.initDataUnsafe.user.id; // получаем user_id из initDataUnsafe
             const data = {
                 first_name: document.getElementById('name').value,
                 last_name: document.getElementById('surname').value,
@@ -299,8 +317,8 @@
             })
                 .then(response => {
                     if (response.ok) {
-                        // Вместо alert показываем модальное окно
-                        modal.style.display = "flex";
+                        // Когда приходит положительный ответ, показываем второе модальное окно
+                        modalFinal.style.display = "flex";
                     } else {
                         alert('Ошибка при отправке данных.');
                     }
@@ -311,9 +329,9 @@
                 });
         });
 
-        // При клике на "Ок" в модальном окне закрываем приложение
-        document.getElementById('modalOk').addEventListener('click', function () {
-            modal.style.display = "none";
+        // При клике на "Ок" во втором модальном окне – закрываем его и приложение
+        document.getElementById('modalFinalOk').addEventListener('click', function () {
+            modalFinal.style.display = "none";
             Telegram.WebApp.close();
         });
 
