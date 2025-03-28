@@ -195,14 +195,26 @@
                 });
         });
 
-        // Реализация эффекта "резинки" при потягивании вниз
+        // Реализация эффекта "резинки" для потягивания вниз и вверх
         const scrollContainer = document.getElementById('scrollContainer');
         let startY = 0;
         let currentY = 0;
         let isDragging = false;
+        let rubberDirection = null; // 'top' или 'bottom'
 
         scrollContainer.addEventListener('touchstart', function (e) {
+            // Если в верхней части, то rubberDirection = 'top'
             if (scrollContainer.scrollTop === 0) {
+                rubberDirection = 'top';
+            }
+            // Если в нижней части
+            else if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight) {
+                rubberDirection = 'bottom';
+            } else {
+                rubberDirection = null;
+            }
+
+            if (rubberDirection) {
                 startY = e.touches[0].clientY;
                 isDragging = true;
                 scrollContainer.style.transition = '';
@@ -210,13 +222,18 @@
         });
 
         scrollContainer.addEventListener('touchmove', function (e) {
-            if (!isDragging) return;
+            if (!isDragging || !rubberDirection) return;
             currentY = e.touches[0].clientY;
             let diff = currentY - startY;
-            if (diff > 0) { // только если тянем вниз
-                // Применяем демпфирование (умножение на коэффициент меньше 1)
+
+            if (rubberDirection === 'top' && diff > 0) {
+                // Тянем вниз, когда находимся вверху
                 scrollContainer.style.transform = 'translateY(' + (diff * 0.5) + 'px)';
-                e.preventDefault(); // предотвращаем нативное поведение скролла
+                e.preventDefault();
+            } else if (rubberDirection === 'bottom' && diff < 0) {
+                // Тянем вверх, когда находимся внизу
+                scrollContainer.style.transform = 'translateY(' + (diff * 0.5) + 'px)';
+                e.preventDefault();
             }
         });
 
