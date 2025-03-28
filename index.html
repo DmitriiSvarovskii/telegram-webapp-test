@@ -19,7 +19,7 @@
             font-family: 'Roboto', Arial, sans-serif;
         }
 
-        /* Контейнер, в котором происходит скроллинг и реализован эффект "резинки" */
+        /* Контейнер, которому всегда применяется эффект "резинки" при перетягивании */
         .scroll-container {
             min-height: 100vh;
             width: 100%;
@@ -195,45 +195,24 @@
                 });
         });
 
-        // Реализация эффекта "резинки" для потягивания вниз и вверх
+        // Эффект "резинки" при перетягивании (в любом направлении)
         const scrollContainer = document.getElementById('scrollContainer');
         let startY = 0;
-        let currentY = 0;
         let isDragging = false;
-        let rubberDirection = null; // 'top' или 'bottom'
-        const tolerance = 1; // небольшая погрешность для определения нижней границы
 
         scrollContainer.addEventListener('touchstart', function (e) {
-            // Определяем, находимся ли мы в самом верху или в самом низу
-            if (scrollContainer.scrollTop <= tolerance) {
-                rubberDirection = 'top';
-            } else if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight - tolerance) {
-                rubberDirection = 'bottom';
-            } else {
-                rubberDirection = null;
-            }
-
-            if (rubberDirection) {
-                startY = e.touches[0].clientY;
-                isDragging = true;
-                scrollContainer.style.transition = '';
-            }
+            startY = e.touches[0].clientY;
+            isDragging = true;
+            scrollContainer.style.transition = '';
         });
 
         scrollContainer.addEventListener('touchmove', function (e) {
-            if (!isDragging || !rubberDirection) return;
-            currentY = e.touches[0].clientY;
-            let diff = currentY - startY;
-
-            if (rubberDirection === 'top' && diff > 0) {
-                // Потягивание вниз, когда вверху
-                scrollContainer.style.transform = 'translateY(' + (diff * 0.5) + 'px)';
-                e.preventDefault();
-            } else if (rubberDirection === 'bottom' && diff < 0) {
-                // Потягивание вверх, когда внизу
-                scrollContainer.style.transform = 'translateY(' + (diff * 0.5) + 'px)';
-                e.preventDefault();
-            }
+            if (!isDragging) return;
+            const currentY = e.touches[0].clientY;
+            const diff = currentY - startY;
+            // Применяем трансформацию независимо от направления
+            scrollContainer.style.transform = 'translateY(' + (diff * 0.5) + 'px)';
+            e.preventDefault(); // Отключаем нативное скроллирование
         });
 
         scrollContainer.addEventListener('touchend', function (e) {
