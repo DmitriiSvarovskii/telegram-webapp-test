@@ -1,200 +1,232 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
-  <meta charset="UTF-8">
-  <link href="https://fonts.googleapis.com/css?family=Roboto:400&display=swap" rel="stylesheet">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <title>Форма данных</title>
-  <!-- Подключаем Cropper.js -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      overflow: hidden; /* отключаем прокрутку для body */
-      background-color: #343637;
-      color: #fff;
-      font-family: 'Roboto', Arial, sans-serif;
-      overscroll-behavior: contain; /* предотвращаем "оттягивание" за пределы контента */
-    }
-    /* Контейнер со скроллом занимает всю высоту и центрирует содержимое */
-    .scroll-container {
-      min-height: 100vh;
-      width: 100%;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    /* Блок с формой */
-    .container {
-      width: 90%;
-      max-width: 500px;
-      padding: 20px;
-      box-sizing: border-box;
-      /* Если содержимого мало – блок окажется по центру, а если много – начнётся скроллинг внутри scroll-container */
-    }
-    /* Стили для полей ввода */
-    input[type="text"],
-    input[type="date"],
-    input[type="file"] {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
-    }
-    /* Стили для кнопок */
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: #1e1e20;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-      margin-bottom: 15px;
-    }
-    button:hover {
-      opacity: 0.9;
-    }
-    /* Контейнер для предпросмотра изображения */
-    .img-container {
-      width: 100%;
-      max-height: 300px;
-      margin-bottom: 15px;
-      overflow: hidden;
-      position: relative;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    #imagePreview {
-      max-width: 100%;
-      display: block;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-    }
-  </style>
-</head>
-<body>
-  <div class="scroll-container">
-    <div class="container">
-      <!-- Форма данных -->
-      <form id="dataForm">
-        <input type="text" id="surname" name="surname" placeholder="Фамилия" required>
-        <input type="text" id="name" name="name" placeholder="Имя" required>
-        <input type="text" id="city" name="city" placeholder="Город" required>
-        <input type="date" id="birthdate" name="birthdate" placeholder="Дата рождения" required>
-        <input type="text" id="region" name="region" placeholder="Область" required>
-        
-        <label for="imageInput">Загрузите изображение</label>
-        <input type="file" id="imageInput" accept="image/*" required>
-        
-        <div class="img-container">
-          <img id="imagePreview" alt="Предварительный просмотр">
-        </div>
-        
-        <button type="button" id="cropButton">Обрезать изображение</button>
-        
-        <input type="hidden" id="croppedImage" name="croppedImage">
-        
-        <button type="submit">Подтвердить</button>
-      </form>
-    </div>
-  </div>
-  
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script>
-    Telegram.WebApp.expand();
-    function enterFullscreen() {
-      if (!Telegram.WebApp.isFullscreen) {
-        Telegram.WebApp.requestFullscreen();
-      }
-    }
-    Telegram.WebApp.onEvent('viewportChanged', function (event) {
-      enterFullscreen();
-    });
-  </script>
-  
-  <!-- Подключаем Cropper.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-  <script>
-    let cropper;
-    const imageInput = document.getElementById('imageInput');
-    const imagePreview = document.getElementById('imagePreview');
-    const cropButton = document.getElementById('cropButton');
-    const croppedImageInput = document.getElementById('croppedImage');
-
-    // Инициализация Cropper.js при выборе файла
-    imageInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (event) {
-          imagePreview.src = event.target.result;
-          if (cropper) {
-            cropper.destroy();
-          }
-          cropper = new Cropper(imagePreview, {
-            aspectRatio: 441 / 555,
-            viewMode: 1,
-          });
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    // Обработка нажатия кнопки "Обрезать изображение"
-    cropButton.addEventListener('click', () => {
-      if (cropper) {
-        const canvas = cropper.getCroppedCanvas({
-          width: 441,
-          height: 555,
-        });
-        imagePreview.src = canvas.toDataURL();
-        cropper.destroy();
-        cropper = null;
-        croppedImageInput.value = canvas.toDataURL();
-      }
-    });
-
-    // Отправка данных формы
-    document.getElementById('dataForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const data = {
-        first_name: document.getElementById('name').value,
-        last_name: document.getElementById('surname').value,
-        city: document.getElementById('city').value,
-        birth_day: document.getElementById('birthdate').value,
-        region: document.getElementById('region').value,
-        photo: document.getElementById('croppedImage').value
-      };
-
-      fetch('https://acde-2a04-5201-1-00-dc.ngrok-free.app/get_data', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
-      .then(response => {
-        if (response.ok) {
-          alert('Данные успешно отправлены!');
-        } else {
-          alert('Ошибка при отправке данных.');
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400&display=swap" rel="stylesheet">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <title>Форма данных</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background-color: #343637;
+            color: #fff;
+            font-family: 'Roboto', Arial, sans-serif;
         }
-      })
-      .catch(error => {
-        console.error('Ошибка:', error);
-        alert('Ошибка при отправке данных.');
-      });
-    });
-  </script>
+
+        /* Контейнер, в котором происходит скроллинг и реализован эффект "резинки" */
+        .scroll-container {
+            min-height: 100vh;
+            width: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #1e1e20;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .img-container {
+            width: 100%;
+            max-height: 300px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #imagePreview {
+            max-width: 100%;
+            display: block;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="scroll-container" id="scrollContainer">
+        <div class="container">
+            <form id="dataForm">
+                <input type="text" id="surname" name="surname" placeholder="Фамилия" required>
+                <input type="text" id="name" name="name" placeholder="Имя" required>
+                <input type="text" id="city" name="city" placeholder="Город" required>
+                <input type="date" id="birthdate" name="birthdate" placeholder="Дата рождения" required>
+                <input type="text" id="region" name="region" placeholder="Область" required>
+
+                <label for="imageInput">Загрузите изображение</label>
+                <input type="file" id="imageInput" accept="image/*" required>
+
+                <div class="img-container">
+                    <img id="imagePreview" alt="Предварительный просмотр">
+                </div>
+
+                <button type="button" id="cropButton">Обрезать изображение</button>
+
+                <input type="hidden" id="croppedImage" name="croppedImage">
+
+                <button type="submit">Подтвердить</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        Telegram.WebApp.expand();
+        function enterFullscreen() {
+            if (!Telegram.WebApp.isFullscreen) {
+                Telegram.WebApp.requestFullscreen();
+            }
+        }
+        Telegram.WebApp.onEvent('viewportChanged', function (event) {
+            enterFullscreen();
+        });
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script>
+        let cropper;
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const cropButton = document.getElementById('cropButton');
+        const croppedImageInput = document.getElementById('croppedImage');
+
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    imagePreview.src = event.target.result;
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    cropper = new Cropper(imagePreview, {
+                        aspectRatio: 441 / 555,
+                        viewMode: 1,
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        cropButton.addEventListener('click', () => {
+            if (cropper) {
+                const canvas = cropper.getCroppedCanvas({
+                    width: 441,
+                    height: 555,
+                });
+                imagePreview.src = canvas.toDataURL();
+                cropper.destroy();
+                cropper = null;
+                croppedImageInput.value = canvas.toDataURL();
+            }
+        });
+
+        document.getElementById('dataForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const data = {
+                first_name: document.getElementById('name').value,
+                last_name: document.getElementById('surname').value,
+                city: document.getElementById('city').value,
+                birth_day: document.getElementById('birthdate').value,
+                region: document.getElementById('region').value,
+                photo: document.getElementById('croppedImage').value
+            };
+
+            fetch('https://acde-2a04-5201-1-00-dc.ngrok-free.app/get_data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Данные успешно отправлены!');
+                    } else {
+                        alert('Ошибка при отправке данных.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    alert('Ошибка при отправке данных.');
+                });
+        });
+
+        // Реализация эффекта "резинки" при потягивании вниз
+        const scrollContainer = document.getElementById('scrollContainer');
+        let startY = 0;
+        let currentY = 0;
+        let isDragging = false;
+
+        scrollContainer.addEventListener('touchstart', function (e) {
+            if (scrollContainer.scrollTop === 0) {
+                startY = e.touches[0].clientY;
+                isDragging = true;
+                scrollContainer.style.transition = '';
+            }
+        });
+
+        scrollContainer.addEventListener('touchmove', function (e) {
+            if (!isDragging) return;
+            currentY = e.touches[0].clientY;
+            let diff = currentY - startY;
+            if (diff > 0) { // только если тянем вниз
+                // Применяем демпфирование (умножение на коэффициент меньше 1)
+                scrollContainer.style.transform = 'translateY(' + (diff * 0.5) + 'px)';
+                e.preventDefault(); // предотвращаем нативное поведение скролла
+            }
+        });
+
+        scrollContainer.addEventListener('touchend', function (e) {
+            if (!isDragging) return;
+            isDragging = false;
+            scrollContainer.style.transition = 'transform 0.3s ease';
+            scrollContainer.style.transform = 'translateY(0)';
+        });
+    </script>
 </body>
+
 </html>
