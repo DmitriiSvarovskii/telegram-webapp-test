@@ -7,6 +7,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>Форма данных</title>
+    <!-- Подключаем Cropper.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <style>
         html,
@@ -52,7 +53,7 @@
             color: #fff;
         }
 
-        /* Кастомное поле выбора даты */
+        /* Кастомное поле выбора даты – label, по клику открывается скрытый input */
         .custom-date-label {
             display: inline-block;
             width: 100%;
@@ -76,7 +77,7 @@
             height: 0;
         }
 
-        /* Кастомная кнопка выбора файла */
+        /* Кастомная кнопка выбора изображения */
         .custom-file-label {
             display: inline-block;
             width: 100%;
@@ -113,10 +114,9 @@
             opacity: 0.9;
         }
 
-        /* Контейнер для предпросмотра изображения + область обрезки */
+        /* Область для обрезки изображения – скрыта по умолчанию */
         #cropSection {
             display: none;
-            /* по умолчанию скрыто */
             margin-bottom: 15px;
         }
 
@@ -168,6 +168,7 @@
     <div class="scroll-container" id="scrollContainer">
         <div class="container">
             <form id="dataForm">
+                <!-- Поля формы -->
                 <input type="text" id="surname" name="surname" placeholder="Фамилия" required>
                 <input type="text" id="name" name="name" placeholder="Имя" required>
                 <input type="text" id="city" name="city" placeholder="Город" required>
@@ -176,7 +177,7 @@
                 <label for="birthdate" class="custom-date-label" id="dateLabel">Дата рождения</label>
                 <input type="date" id="birthdate" name="birthdate" class="hidden-date" required>
 
-                <!-- Кастомный выбор файла -->
+                <!-- Кастомное поле выбора изображения -->
                 <label for="imageInput" class="custom-file-label" id="fileLabel">Выбрать изображение</label>
                 <input type="file" id="imageInput" accept="image/*" required>
 
@@ -219,7 +220,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script>
         let cropper = null;
-        let isCropped = false; // состояние обрезки: false – не обрезали, true – обрезано
+        let isCropped = false; // состояние: false – не обрезали, true – обрезано
         let originalImageURL = null; // оригинальное изображение до обрезки
 
         const imageInput = document.getElementById('imageInput');
@@ -230,8 +231,9 @@
         const dateInput = document.getElementById('birthdate');
         const dateLabel = document.getElementById('dateLabel');
         const form = document.getElementById('dataForm');
+        const modal = document.getElementById('modal');
 
-        // При выборе файла:
+        // При выборе файла – отображаем область для обрезки и обновляем текст кнопки
         imageInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -240,12 +242,10 @@
                 reader.onload = function (event) {
                     originalImageURL = event.target.result;
                     imagePreview.src = originalImageURL;
-                    // Инициализируем Cropper, если еще не инициализирован
                     if (cropper) { cropper.destroy(); }
                     cropper = new Cropper(imagePreview, { aspectRatio: 441 / 555, viewMode: 1 });
                     isCropped = false;
                     cropButton.textContent = "Обрезать изображение";
-                    // Показываем область для обрезки
                     cropSection.style.display = "block";
                 };
                 reader.readAsDataURL(file);
@@ -254,26 +254,21 @@
 
         // Обновление кастомного поля даты при выборе значения
         dateInput.addEventListener('change', function () {
-            // Можно добавить форматирование, если нужно
             dateLabel.textContent = this.value ? this.value : "Дата рождения";
         });
 
-        // Обработка кнопки Crop / Изменить
+        // Обработка кнопки обрезки / изменения изображения
         cropButton.addEventListener('click', () => {
             if (!isCropped) {
-                // Если ещё не обрезали – выполняем обрезку
                 if (cropper) {
                     const canvas = cropper.getCroppedCanvas({ width: 441, height: 555 });
                     imagePreview.src = canvas.toDataURL();
-                    // Сохраняем обрезанное изображение (можно сохранить в скрытом поле, если требуется)
-                    // Останавливаем работу Cropper
                     cropper.destroy();
                     cropper = null;
                     isCropped = true;
                     cropButton.textContent = "Изменить";
                 }
             } else {
-                // Если уже обрезали, то "Изменить" – возвращаем исходное изображение и запускаем Cropper заново
                 imagePreview.src = originalImageURL;
                 cropper = new Cropper(imagePreview, { aspectRatio: 441 / 555, viewMode: 1 });
                 isCropped = false;
@@ -281,23 +276,43 @@
             }
         });
 
-        // Обработка отправки формы
+        // Отправка формы с fetch. При успешном ответе показываем модальное окно.
         form.addEventListener('submit', function (e) {
             e.preventDefault();
-            // Проверяем, что все поля заполнены и изображение выбрано (условие можно доработать)
-            if (form.checkValidity() && imageInput.files.length > 0) {
-                // Показываем модальное окно
-                document.getElementById('modal').style.display = "flex";
-            } else {
-                alert("Пожалуйста, заполните все поля и выберите изображение.");
-            }
+            // Собираем данные формы
+            const data = {
+                first_name: document.getElementById('name').value,
+                last_name: document.getElementById('surname').value,
+                city: document.getElementById('city').value,
+                birth_day: dateInput.value,
+                region: document.getElementById('region').value,
+                // Здесь можно передавать либо обрезанное изображение, либо оригинал
+                photo: isCropped ? imagePreview.src : ""
+            };
+
+            // Выполняем запрос
+            fetch('https://acde-2a04-5201-1-00-dc.ngrok-free.app/get_data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Вместо alert показываем модальное окно
+                        modal.style.display = "flex";
+                    } else {
+                        alert('Ошибка при отправке данных.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    alert('Ошибка при отправке данных.');
+                });
         });
 
-        // Обработка нажатия кнопки "Ок" в модальном окне
+        // При клике на "Ок" в модальном окне закрываем приложение
         document.getElementById('modalOk').addEventListener('click', function () {
-            // Закрываем модальное окно
-            document.getElementById('modal').style.display = "none";
-            // Закрываем приложение Telegram Web App
+            modal.style.display = "none";
             Telegram.WebApp.close();
         });
 
@@ -315,7 +330,7 @@
             const currentY = e.touches[0].clientY;
             const diff = currentY - startY;
             scrollContainer.style.transform = 'translateY(' + (diff * 0.5) + 'px)';
-            e.preventDefault(); // отключаем нативное скроллирование
+            e.preventDefault();
         });
         scrollContainer.addEventListener('touchend', function (e) {
             if (!isDragging) return;
