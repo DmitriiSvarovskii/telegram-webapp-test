@@ -358,6 +358,14 @@
             scrollContainer.style.transition = 'transform 0.3s ease';
             scrollContainer.style.transform = 'translateY(0)';
         });
+        document.addEventListener('touchstart', function (e) {
+            const activeEl = document.activeElement;
+            if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+                if (!e.target.closest('input, textarea, button, select')) {
+                    activeEl.blur();
+                }
+            }
+        });
     </script>
 </body>
 
