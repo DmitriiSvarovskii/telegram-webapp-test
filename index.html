@@ -172,13 +172,14 @@
         document.getElementById('dataForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
+
             const data = {
-                surname: document.getElementById('surname').value,
-                name: document.getElementById('name').value,
+                first_name: document.getElementById('name').value,
+                last_name: document.getElementById('surname').value,
                 city: document.getElementById('city').value,
-                birthdate: document.getElementById('birthdate').value,
+                birth_day: document.getElementById('birthdate').value,
                 region: document.getElementById('region').value,
-                croppedImage: document.getElementById('croppedImage').value
+                photo: document.getElementById('croppedImage').value
             };
 
             fetch('https://acde-2a04-5201-1-00-dc.ngrok-free.app/get_data', {
