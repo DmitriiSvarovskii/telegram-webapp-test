@@ -39,9 +39,8 @@
             box-sizing: border-box;
         }
 
-        /* Общие стили для текстовых полей и поля даты */
-        input[type="text"],
-        input[type="date"] {
+        /* Общие стили для текстовых полей */
+        input[type="text"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
@@ -52,21 +51,28 @@
             color: #fff;
         }
 
-        /* Отключаем нативное оформление для даты */
-        input[type="date"] {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
+        /* Скрытый нативный input для даты */
+        .hidden-date {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            width: 0;
+            height: 0;
         }
 
-        /* Для браузеров на основе WebKit – задаём белый цвет текста даты */
-        input[type="date"]::-webkit-datetime-edit {
+        /* Кастомная область для выбора даты */
+        .custom-date-label {
+            display: inline-block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            background-color: #343637;
             color: #fff;
-        }
-
-        /* Попытка задать цвет placeholder (работает не во всех браузерах) */
-        input[type="date"]::placeholder {
-            color: #fff;
+            text-align: center;
+            cursor: pointer;
         }
 
         /* Стили для кастомной кнопки выбора файла */
@@ -136,13 +142,16 @@
                 <input type="text" id="surname" name="surname" placeholder="Фамилия" required>
                 <input type="text" id="name" name="name" placeholder="Имя" required>
                 <input type="text" id="city" name="city" placeholder="Город" required>
-                <!-- Поле даты – placeholder может не отображаться, если браузер не поддерживает -->
-                <input type="date" id="birthdate" name="birthdate" placeholder="Дата рождения" required>
+
+                <!-- Кастомное поле выбора даты -->
+                <label for="birthdate" class="custom-date-label" id="dateLabel">Дата рождения</label>
+                <input type="date" id="birthdate" name="birthdate" class="hidden-date" required>
+
                 <input type="text" id="region" name="region" placeholder="Область" required>
 
                 <!-- Кастомный выбор файла -->
                 <label for="imageInput">Загрузите изображение</label>
-                <label for="imageInput" class="custom-file-label">Выбрать файл</label>
+                <label for="imageInput" class="custom-file-label" id="fileLabel">Выбрать файл</label>
                 <input type="file" id="imageInput" accept="image/*" required>
 
                 <div class="img-container">
@@ -158,7 +167,7 @@
         </div>
     </div>
 
-    <!-- Скрипты для Telegram Web App -->
+    <!-- Telegram Web App -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         Telegram.WebApp.expand();
@@ -180,12 +189,15 @@
         const imagePreview = document.getElementById('imagePreview');
         const cropButton = document.getElementById('cropButton');
         const croppedImageInput = document.getElementById('croppedImage');
+        const fileLabel = document.getElementById('fileLabel');
+        const dateInput = document.getElementById('birthdate');
+        const dateLabel = document.getElementById('dateLabel');
 
+        // Обновление текста кастомной кнопки выбора файла
         imageInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
-                // Обновляем текст кнопки выбора файла на имя файла
-                document.querySelector('.custom-file-label').textContent = file.name;
+                fileLabel.textContent = file.name;
                 const reader = new FileReader();
                 reader.onload = function (event) {
                     imagePreview.src = event.target.result;
@@ -199,6 +211,12 @@
                 };
                 reader.readAsDataURL(file);
             }
+        });
+
+        // Обновление текста кастомной области даты при выборе значения
+        dateInput.addEventListener('change', function () {
+            // Можно отформатировать значение по необходимости
+            dateLabel.textContent = this.value || 'Дата рождения';
         });
 
         cropButton.addEventListener('click', () => {
@@ -220,7 +238,7 @@
                 first_name: document.getElementById('name').value,
                 last_name: document.getElementById('surname').value,
                 city: document.getElementById('city').value,
-                birth_day: document.getElementById('birthdate').value,
+                birth_day: dateInput.value,
                 region: document.getElementById('region').value,
                 photo: document.getElementById('croppedImage').value
             };
