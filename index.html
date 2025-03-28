@@ -201,14 +201,13 @@
         let currentY = 0;
         let isDragging = false;
         let rubberDirection = null; // 'top' или 'bottom'
+        const tolerance = 1; // небольшая погрешность для определения нижней границы
 
         scrollContainer.addEventListener('touchstart', function (e) {
-            // Если в верхней части, то rubberDirection = 'top'
-            if (scrollContainer.scrollTop === 0) {
+            // Определяем, находимся ли мы в самом верху или в самом низу
+            if (scrollContainer.scrollTop <= tolerance) {
                 rubberDirection = 'top';
-            }
-            // Если в нижней части
-            else if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight) {
+            } else if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight - tolerance) {
                 rubberDirection = 'bottom';
             } else {
                 rubberDirection = null;
@@ -227,11 +226,11 @@
             let diff = currentY - startY;
 
             if (rubberDirection === 'top' && diff > 0) {
-                // Тянем вниз, когда находимся вверху
+                // Потягивание вниз, когда вверху
                 scrollContainer.style.transform = 'translateY(' + (diff * 0.5) + 'px)';
                 e.preventDefault();
             } else if (rubberDirection === 'bottom' && diff < 0) {
-                // Тянем вверх, когда находимся внизу
+                // Потягивание вверх, когда внизу
                 scrollContainer.style.transform = 'translateY(' + (diff * 0.5) + 'px)';
                 e.preventDefault();
             }
