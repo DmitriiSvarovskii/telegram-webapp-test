@@ -3,27 +3,35 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Форма данных</title>
     <!-- Подключаем Cropper.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <style>
-        /* Полноэкранный режим */
+        /* Отключаем прокрутку для всего окна */
+        html,
         body {
+            height: 100%;
             margin: 0;
-            padding: 0;
+            overflow: hidden;
             background-color: #343637;
             color: #ffffff;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+
+        /* Контейнер, который будет скроллиться */
+        .scroll-container {
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            /* Плавная прокрутка для iOS */
         }
 
         .container {
             width: 90%;
             max-width: 500px;
+            margin: 20px auto;
             padding: 20px;
             box-sizing: border-box;
         }
@@ -81,30 +89,33 @@
 </head>
 
 <body>
-    <div class="container">
-        <form id="dataForm">
-            <input type="text" id="surname" name="surname" placeholder="Фамилия" required>
-            <input type="text" id="name" name="name" placeholder="Имя" required>
-            <input type="text" id="city" name="city" placeholder="Город" required>
-            <input type="date" id="birthdate" name="birthdate" placeholder="Дата рождения" required>
-            <input type="text" id="region" name="region" placeholder="Область" required>
+    <div class="scroll-container">
+        <div class="container">
+            <!-- Здесь размещаем форму -->
+            <form id="dataForm">
+                <input type="text" id="surname" name="surname" placeholder="Фамилия" required>
+                <input type="text" id="name" name="name" placeholder="Имя" required>
+                <input type="text" id="city" name="city" placeholder="Город" required>
+                <input type="date" id="birthdate" name="birthdate" placeholder="Дата рождения" required>
+                <input type="text" id="region" name="region" placeholder="Область" required>
 
-            <label for="imageInput">Загрузите изображение</label>
-            <input type="file" id="imageInput" accept="image/*" required>
+                <label for="imageInput">Загрузите изображение</label>
+                <input type="file" id="imageInput" accept="image/*" required>
 
-            <div class="img-container">
-                <img id="imagePreview" alt="Предварительный просмотр">
-            </div>
+                <div class="img-container">
+                    <img id="imagePreview" alt="Предварительный просмотр">
+                </div>
 
-            <!-- Кнопка для обрезки изображения -->
-            <button type="button" id="cropButton">Обрезать изображение</button>
+                <!-- Кнопка для обрезки изображения -->
+                <button type="button" id="cropButton">Обрезать изображение</button>
 
-            <!-- Скрытое поле для хранения обрезанного изображения -->
-            <input type="hidden" id="croppedImage" name="croppedImage">
+                <!-- Скрытое поле для хранения обрезанного изображения -->
+                <input type="hidden" id="croppedImage" name="croppedImage">
 
-            <!-- Кнопка подтверждения -->
-            <button type="submit">Подтвердить</button>
-        </form>
+                <!-- Кнопка подтверждения -->
+                <button type="submit">Подтвердить</button>
+            </form>
+        </div>
     </div>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
