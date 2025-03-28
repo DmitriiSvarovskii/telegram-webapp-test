@@ -37,9 +37,10 @@
             max-width: 500px;
             padding: 20px;
             box-sizing: border-box;
+            position: relative;
         }
 
-        /* Общие стили для текстовых полей */
+        /* Стили для текстовых полей */
         input[type="text"] {
             width: 100%;
             padding: 10px;
@@ -51,16 +52,7 @@
             color: #fff;
         }
 
-        /* Скрытый нативный input для даты */
-        .hidden-date {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
-            width: 0;
-            height: 0;
-        }
-
-        /* Кастомная область для выбора даты */
+        /* Кастомное поле выбора даты */
         .custom-date-label {
             display: inline-block;
             width: 100%;
@@ -75,7 +67,16 @@
             cursor: pointer;
         }
 
-        /* Стили для кастомной кнопки выбора файла */
+        /* Скрытый нативный input для даты */
+        .hidden-date {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            width: 0;
+            height: 0;
+        }
+
+        /* Кастомная кнопка выбора файла */
         .custom-file-label {
             display: inline-block;
             width: 100%;
@@ -90,7 +91,7 @@
             cursor: pointer;
         }
 
-        /* Скрываем нативный input file */
+        /* Скрываем нативный input для файла */
         input[type="file"] {
             display: none;
         }
@@ -112,15 +113,21 @@
             opacity: 0.9;
         }
 
-        /* Контейнер для предпросмотра изображения */
+        /* Контейнер для предпросмотра изображения + область обрезки */
+        #cropSection {
+            display: none;
+            /* по умолчанию скрыто */
+            margin-bottom: 15px;
+        }
+
         .img-container {
             width: 100%;
             max-height: 300px;
-            margin-bottom: 15px;
             overflow: hidden;
             position: relative;
             border: 1px solid #ccc;
             border-radius: 5px;
+            margin-bottom: 15px;
         }
 
         #imagePreview {
@@ -128,9 +135,31 @@
             display: block;
         }
 
-        label {
-            display: block;
-            margin-bottom: 5px;
+        /* Модальное окно */
+        #modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        #modalContent {
+            background: #1e1e20;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            max-width: 300px;
+            width: 80%;
+        }
+
+        #modalContent p {
+            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -142,28 +171,33 @@
                 <input type="text" id="surname" name="surname" placeholder="Фамилия" required>
                 <input type="text" id="name" name="name" placeholder="Имя" required>
                 <input type="text" id="city" name="city" placeholder="Город" required>
-
+                <input type="text" id="region" name="region" placeholder="Область" required>
                 <!-- Кастомное поле выбора даты -->
                 <label for="birthdate" class="custom-date-label" id="dateLabel">Дата рождения</label>
                 <input type="date" id="birthdate" name="birthdate" class="hidden-date" required>
 
-                <input type="text" id="region" name="region" placeholder="Область" required>
-
                 <!-- Кастомный выбор файла -->
-                <label for="imageInput">Загрузите изображение</label>
-                <label for="imageInput" class="custom-file-label" id="fileLabel">Выбрать файл</label>
+                <label for="imageInput" class="custom-file-label" id="fileLabel">Выбрать изображение</label>
                 <input type="file" id="imageInput" accept="image/*" required>
 
-                <div class="img-container">
-                    <img id="imagePreview" alt="Предварительный просмотр">
+                <!-- Область для обрезки изображения -->
+                <div id="cropSection">
+                    <div class="img-container">
+                        <img id="imagePreview" alt="Предварительный просмотр">
+                    </div>
+                    <button type="button" id="cropButton">Обрезать изображение</button>
                 </div>
 
-                <button type="button" id="cropButton">Обрезать изображение</button>
-
-                <input type="hidden" id="croppedImage" name="croppedImage">
-
-                <button type="submit">Подтвердить</button>
+                <button type="submit" id="submitButton">Подтвердить</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно -->
+    <div id="modal">
+        <div id="modalContent">
+            <p>Документы будут отправлены в ближайшее время в чат</p>
+            <button id="modalOk">Ок</button>
         </div>
     </div>
 
@@ -184,102 +218,105 @@
     <!-- Cropper.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script>
-        let cropper;
+        let cropper = null;
+        let isCropped = false; // состояние обрезки: false – не обрезали, true – обрезано
+        let originalImageURL = null; // оригинальное изображение до обрезки
+
         const imageInput = document.getElementById('imageInput');
+        const fileLabel = document.getElementById('fileLabel');
+        const cropSection = document.getElementById('cropSection');
         const imagePreview = document.getElementById('imagePreview');
         const cropButton = document.getElementById('cropButton');
-        const croppedImageInput = document.getElementById('croppedImage');
-        const fileLabel = document.getElementById('fileLabel');
         const dateInput = document.getElementById('birthdate');
         const dateLabel = document.getElementById('dateLabel');
+        const form = document.getElementById('dataForm');
 
-        // Обновление текста кастомной кнопки выбора файла
+        // При выборе файла:
         imageInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
                 fileLabel.textContent = file.name;
                 const reader = new FileReader();
                 reader.onload = function (event) {
-                    imagePreview.src = event.target.result;
-                    if (cropper) {
-                        cropper.destroy();
-                    }
-                    cropper = new Cropper(imagePreview, {
-                        aspectRatio: 441 / 555,
-                        viewMode: 1,
-                    });
+                    originalImageURL = event.target.result;
+                    imagePreview.src = originalImageURL;
+                    // Инициализируем Cropper, если еще не инициализирован
+                    if (cropper) { cropper.destroy(); }
+                    cropper = new Cropper(imagePreview, { aspectRatio: 441 / 555, viewMode: 1 });
+                    isCropped = false;
+                    cropButton.textContent = "Обрезать изображение";
+                    // Показываем область для обрезки
+                    cropSection.style.display = "block";
                 };
                 reader.readAsDataURL(file);
             }
         });
 
-        // Обновление текста кастомной области даты при выборе значения
+        // Обновление кастомного поля даты при выборе значения
         dateInput.addEventListener('change', function () {
-            // Можно отформатировать значение по необходимости
-            dateLabel.textContent = this.value || 'Дата рождения';
+            // Можно добавить форматирование, если нужно
+            dateLabel.textContent = this.value ? this.value : "Дата рождения";
         });
 
+        // Обработка кнопки Crop / Изменить
         cropButton.addEventListener('click', () => {
-            if (cropper) {
-                const canvas = cropper.getCroppedCanvas({
-                    width: 441,
-                    height: 555,
-                });
-                imagePreview.src = canvas.toDataURL();
-                cropper.destroy();
-                cropper = null;
-                croppedImageInput.value = canvas.toDataURL();
+            if (!isCropped) {
+                // Если ещё не обрезали – выполняем обрезку
+                if (cropper) {
+                    const canvas = cropper.getCroppedCanvas({ width: 441, height: 555 });
+                    imagePreview.src = canvas.toDataURL();
+                    // Сохраняем обрезанное изображение (можно сохранить в скрытом поле, если требуется)
+                    // Останавливаем работу Cropper
+                    cropper.destroy();
+                    cropper = null;
+                    isCropped = true;
+                    cropButton.textContent = "Изменить";
+                }
+            } else {
+                // Если уже обрезали, то "Изменить" – возвращаем исходное изображение и запускаем Cropper заново
+                imagePreview.src = originalImageURL;
+                cropper = new Cropper(imagePreview, { aspectRatio: 441 / 555, viewMode: 1 });
+                isCropped = false;
+                cropButton.textContent = "Обрезать изображение";
             }
         });
 
-        document.getElementById('dataForm').addEventListener('submit', function (e) {
+        // Обработка отправки формы
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
-            const data = {
-                first_name: document.getElementById('name').value,
-                last_name: document.getElementById('surname').value,
-                city: document.getElementById('city').value,
-                birth_day: dateInput.value,
-                region: document.getElementById('region').value,
-                photo: document.getElementById('croppedImage').value
-            };
+            // Проверяем, что все поля заполнены и изображение выбрано (условие можно доработать)
+            if (form.checkValidity() && imageInput.files.length > 0) {
+                // Показываем модальное окно
+                document.getElementById('modal').style.display = "flex";
+            } else {
+                alert("Пожалуйста, заполните все поля и выберите изображение.");
+            }
+        });
 
-            fetch('https://acde-2a04-5201-1-00-dc.ngrok-free.app/get_data', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-                .then(response => {
-                    if (response.ok) {
-                        alert('Данные успешно отправлены!');
-                    } else {
-                        alert('Ошибка при отправке данных.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Ошибка:', error);
-                    alert('Ошибка при отправке данных.');
-                });
+        // Обработка нажатия кнопки "Ок" в модальном окне
+        document.getElementById('modalOk').addEventListener('click', function () {
+            // Закрываем модальное окно
+            document.getElementById('modal').style.display = "none";
+            // Закрываем приложение Telegram Web App
+            Telegram.WebApp.close();
         });
 
         // Эффект "резинки" при перетягивании (в любом направлении)
         const scrollContainer = document.getElementById('scrollContainer');
         let startY = 0;
         let isDragging = false;
-
         scrollContainer.addEventListener('touchstart', function (e) {
             startY = e.touches[0].clientY;
             isDragging = true;
             scrollContainer.style.transition = '';
         });
-
         scrollContainer.addEventListener('touchmove', function (e) {
             if (!isDragging) return;
             const currentY = e.touches[0].clientY;
             const diff = currentY - startY;
             scrollContainer.style.transform = 'translateY(' + (diff * 0.5) + 'px)';
-            e.preventDefault(); // Отключаем нативное скроллирование
+            e.preventDefault(); // отключаем нативное скроллирование
         });
-
         scrollContainer.addEventListener('touchend', function (e) {
             if (!isDragging) return;
             isDragging = false;
