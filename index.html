@@ -19,7 +19,7 @@
             font-family: 'Roboto', Arial, sans-serif;
         }
 
-        /* Контейнер, которому всегда применяется эффект "резинки" при перетягивании */
+        /* Контейнер для скролла и центрирования содержимого */
         .scroll-container {
             min-height: 100vh;
             width: 100%;
@@ -39,17 +39,47 @@
             box-sizing: border-box;
         }
 
+        /* Общие стили для текстовых полей и даты */
         input[type="text"],
-        input[type="date"],
-        input[type="file"] {
+        input[type="date"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box;
+            background-color: #343637;
+            color: #fff;
         }
 
+        /* Отключаем нативное оформление для даты */
+        input[type="date"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        /* Стили для кастомной кнопки выбора файла */
+        .custom-file-label {
+            display: inline-block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            background-color: #343637;
+            color: #fff;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        /* Скрываем нативный input file */
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Стили для кнопок */
         button {
             width: 100%;
             padding: 10px;
@@ -66,6 +96,7 @@
             opacity: 0.9;
         }
 
+        /* Контейнер для предпросмотра изображения */
         .img-container {
             width: 100%;
             max-height: 300px;
@@ -89,16 +120,20 @@
 </head>
 
 <body>
-    <div class="scroll-container" id="scrollContainer">
+    <div class="scroll-container">
         <div class="container">
             <form id="dataForm">
                 <input type="text" id="surname" name="surname" placeholder="Фамилия" required>
                 <input type="text" id="name" name="name" placeholder="Имя" required>
                 <input type="text" id="city" name="city" placeholder="Город" required>
+                <!-- Поле даты теперь выглядит как текстовое поле -->
                 <input type="date" id="birthdate" name="birthdate" placeholder="Дата рождения" required>
                 <input type="text" id="region" name="region" placeholder="Область" required>
 
+                <!-- Можно оставить заголовок для загрузки изображения -->
                 <label for="imageInput">Загрузите изображение</label>
+                <!-- Кастомная кнопка выбора файла -->
+                <label for="imageInput" class="custom-file-label">Выбрать файл</label>
                 <input type="file" id="imageInput" accept="image/*" required>
 
                 <div class="img-container">
@@ -138,6 +173,8 @@
         imageInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
+                // Если нужно, можно обновить текст кастомной кнопки выбранным именем файла
+                document.querySelector('.custom-file-label').textContent = file.name;
                 const reader = new FileReader();
                 reader.onload = function (event) {
                     imagePreview.src = event.target.result;
@@ -193,33 +230,6 @@
                     console.error('Ошибка:', error);
                     alert('Ошибка при отправке данных.');
                 });
-        });
-
-        // Эффект "резинки" при перетягивании (в любом направлении)
-        const scrollContainer = document.getElementById('scrollContainer');
-        let startY = 0;
-        let isDragging = false;
-
-        scrollContainer.addEventListener('touchstart', function (e) {
-            startY = e.touches[0].clientY;
-            isDragging = true;
-            scrollContainer.style.transition = '';
-        });
-
-        scrollContainer.addEventListener('touchmove', function (e) {
-            if (!isDragging) return;
-            const currentY = e.touches[0].clientY;
-            const diff = currentY - startY;
-            // Применяем трансформацию независимо от направления
-            scrollContainer.style.transform = 'translateY(' + (diff * 0.5) + 'px)';
-            e.preventDefault(); // Отключаем нативное скроллирование
-        });
-
-        scrollContainer.addEventListener('touchend', function (e) {
-            if (!isDragging) return;
-            isDragging = false;
-            scrollContainer.style.transition = 'transform 0.3s ease';
-            scrollContainer.style.transform = 'translateY(0)';
         });
     </script>
 </body>
