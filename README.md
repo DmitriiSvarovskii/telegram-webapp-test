@@ -1,1 +1,3 @@
 # telegram-webapp-test
+
+query_id=AAEtlYJFAwAAAC2VgkUTjWFU&user=%7B%22id%22%3A7608636717%2C%22first_name%22%3A%22%D0%94%D0%BC%D0%B8%D1%82%D1%80%D0%B8%D0%B9%22%2C%22last_name%22%3A%22%D0%A1%D0%B2%D0%B0%D1%80%D0%BE%D0%B2%D1%81%D0%BA%D0%B8%D0%B9%22%2C%22username%22%3A%22swarovskidmitrii%22%2C%22language_code%22%3A%22ru%22%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2F-DNBgm10etzr59EHiyhlT8AccrL0yoalNAxvDhYbuZW5jyssi6YAZJPtiY9nOzXW.svg%22%7D&auth_date=1742899991&signature=pth0BS_YfKhF5340rV_OaicFHORTx8SE0gcZO2t8gzaDLmdC9k99cmDrFsvMXqJ2Jxy8BdgxcNvXGZwQzhEkCA&hash=d74cea9f2b1d3791b5cfafe2f9b9b9d4ac649bd0bfd1b0c18879e01b1a39a01b

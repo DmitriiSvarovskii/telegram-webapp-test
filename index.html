@@ -280,14 +280,15 @@
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             // Собираем данные формы
+            const userId = Telegram.WebApp.initDataUnsafe.user.id;
             const data = {
                 first_name: document.getElementById('name').value,
                 last_name: document.getElementById('surname').value,
                 city: document.getElementById('city').value,
                 birth_day: dateInput.value,
                 region: document.getElementById('region').value,
-                // Здесь можно передавать либо обрезанное изображение, либо оригинал
-                photo: isCropped ? imagePreview.src : ""
+                photo: isCropped ? imagePreview.src : "",
+                user_id: userId
             };
 
             // Выполняем запрос
