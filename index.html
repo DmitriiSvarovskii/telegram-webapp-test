@@ -24,12 +24,9 @@
         }
 
         .scroll-container {
-            min-height: 100vh;
-            width: 100%;
+            height: calc(100vh - 80px);
             overflow-y: auto;
-            /* Используйте auto вместо scroll */
             padding-top: 80px;
-            /* Верхний отступ 40px */
             padding-bottom: calc(20px + env(safe-area-inset-bottom));
             box-sizing: border-box;
             display: flex;
@@ -42,6 +39,8 @@
             padding: 20px;
             box-sizing: border-box;
             position: relative;
+            border-bottom: 1px solid #fff;
+            /* нижняя граница */
         }
 
         /* Стили для текстовых полей */
