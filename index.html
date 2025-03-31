@@ -14,25 +14,26 @@
         body {
             height: 100%;
             margin: 0;
-            overflow: scroll;
+            padding: 0;
+            overflow: auto;
             background-color: #343637;
             color: #fff;
             font-family: 'Roboto', Arial, sans-serif;
+            -webkit-overflow-scrolling: touch;
+            /* Поддержка плавного скролла и растяжения */
         }
 
-        /* Контейнер для скролла и центрирования содержимого */
         .scroll-container {
             min-height: 100vh;
             width: 100%;
-            overflow-y: scroll;
-            -webkit-overflow-scrolling: touch;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            overflow-y: auto;
+            /* Используйте auto вместо scroll */
+            padding-top: 40px;
+            /* Верхний отступ 40px */
             padding-bottom: calc(20px + env(safe-area-inset-bottom));
             box-sizing: border-box;
-
+            display: flex;
+            justify-content: center;
         }
 
         .container {
