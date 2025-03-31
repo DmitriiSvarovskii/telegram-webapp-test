@@ -14,23 +14,25 @@
         body {
             height: 100%;
             margin: 0;
-            padding: 0;
-            overflow: auto;
+            overflow: scroll;
             background-color: #343637;
             color: #fff;
             font-family: 'Roboto', Arial, sans-serif;
-            -webkit-overflow-scrolling: touch;
-            /* Поддержка плавного скролла и растяжения */
         }
 
+        /* Контейнер для скролла и центрирования содержимого */
         .scroll-container {
-            height: calc(100vh - 80px);
-            overflow-y: auto;
-            padding-top: 80px;
+            min-height: 100vh;
+            width: 100%;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
             padding-bottom: calc(20px + env(safe-area-inset-bottom));
             box-sizing: border-box;
-            display: flex;
-            justify-content: center;
+
         }
 
         .container {
@@ -39,8 +41,6 @@
             padding: 20px;
             box-sizing: border-box;
             position: relative;
-            border-bottom: 1px solid #fff;
-            /* нижняя граница */
         }
 
         /* Стили для текстовых полей */
